@@ -1,14 +1,38 @@
-# Welcome to your Lovable project
+# LocalScore Match Tracker
+
+Build a mobile-first React + JavaScript web app called LocalScore for manually tracking local Cricket, Kabaddi and Football matches. No external sports APIs.
+
+Features
+
+Dashboard: Live, Upcoming, Completed matches
+
+Create Match: sport, teams, players, date, venue
+
+Live scorekeeper with large touch-friendly buttons
+
+Match History
+
+Final Scorecard
+
+Pause/Resume
+
+Undo Last Action
+
+Save match data using LocalStorage
+
+Fully responsive for mobile, tablet and desktop
 
 This project was built with [Lovable](https://lovable.dev).
 
+**Live app**: https://local-match-keeper.lovable.app
+
 ## Build with Lovable
 
-Open your project in the [Lovable editor](https://lovable.dev) and keep building.
+Continue developing this project in the [Lovable editor](https://lovable.dev/projects/77a188a9-4661-4310-9254-3d6bf8ee80d2).
 
 - **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: connect the project to GitHub and every change made in Lovable is committed straight to your repository.
-- **Full ownership**: this code is yours. Push to your repository and your changes sync back into Lovable, ready for your next prompt.
+- **Stay in sync**: every change made in Lovable is committed straight to this repository.
+- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
 
 ## Development
 
@@ -20,10 +44,3 @@ cd <repository-name>
 npm i
 npm run dev
 ```
-
-## Built with
-
-- TanStack Start
-- TypeScript
-- React
-- Tailwind CSS
