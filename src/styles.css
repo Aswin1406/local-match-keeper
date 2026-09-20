@@ -19,15 +19,15 @@
  */
 
 @theme inline {
-  --color-night: #070a11;
-  --color-panel: #10151f;
-  --color-panel2: #161d29;
-  --color-ink: #eef2f8;
-  --color-mist: #8b96a8;
-  --color-gold: #ffc233;
-  --color-crim: #ff5470;
-  --color-teal: #2dd4bf;
-  --color-lime: #a3e635;
+  --color-night: var(--night);
+  --color-panel: var(--panel);
+  --color-panel2: var(--panel2);
+  --color-ink: var(--ink);
+  --color-mist: var(--mist);
+  --color-gold: var(--gold);
+  --color-crim: var(--crim);
+  --color-teal: var(--teal);
+  --color-lime: var(--lime);
   --font-display: "Anton", "Arial Narrow", sans-serif;
   --font-sans: "DM Sans", system-ui, sans-serif;
   --radius-sm: calc(var(--radius) - 4px);
@@ -155,27 +155,67 @@
   }
 }
 
-/* LocalScore — cinematic stadium-night theme */
+/* LocalScore — daylight and stadium-night themes */
 :root {
-  --background: #070a11;
-  --foreground: #eef2f8;
-  --card: #10151f;
-  --card-foreground: #eef2f8;
-  --popover: #10151f;
-  --popover-foreground: #eef2f8;
-  --primary: #ffc233;
-  --primary-foreground: #070a11;
-  --secondary: #161d29;
-  --secondary-foreground: #eef2f8;
-  --muted: #161d29;
-  --muted-foreground: #8b96a8;
-  --accent: #2dd4bf;
-  --accent-foreground: #070a11;
-  --destructive: #ff5470;
-  --destructive-foreground: #eef2f8;
-  --border: rgba(255, 255, 255, 0.08);
-  --input: rgba(255, 255, 255, 0.12);
-  --ring: #ffc233;
+  --night: oklch(0.975 0.008 92);
+  --panel: oklch(1 0 0);
+  --panel2: oklch(0.945 0.011 92);
+  --ink: oklch(0.19 0.025 255);
+  --mist: oklch(0.48 0.025 255);
+  --gold: oklch(0.72 0.16 70);
+  --crim: oklch(0.61 0.21 18);
+  --teal: oklch(0.54 0.12 180);
+  --lime: oklch(0.7 0.17 130);
+  --background: var(--night);
+  --foreground: var(--ink);
+  --card: var(--panel);
+  --card-foreground: var(--ink);
+  --popover: var(--panel);
+  --popover-foreground: var(--ink);
+  --primary: var(--gold);
+  --primary-foreground: oklch(0.17 0.025 255);
+  --secondary: var(--panel2);
+  --secondary-foreground: var(--ink);
+  --muted: var(--panel2);
+  --muted-foreground: var(--mist);
+  --accent: var(--teal);
+  --accent-foreground: oklch(0.17 0.025 255);
+  --destructive: var(--crim);
+  --destructive-foreground: oklch(0.99 0 0);
+  --border: oklch(0.82 0.018 255);
+  --input: oklch(0.78 0.018 255);
+  --ring: var(--gold);
+}
+
+.dark {
+  --night: oklch(0.135 0.018 255);
+  --panel: oklch(0.185 0.022 255);
+  --panel2: oklch(0.225 0.026 255);
+  --ink: oklch(0.96 0.01 255);
+  --mist: oklch(0.68 0.025 255);
+  --gold: oklch(0.84 0.17 82);
+  --crim: oklch(0.68 0.2 16);
+  --teal: oklch(0.78 0.14 180);
+  --lime: oklch(0.84 0.2 125);
+  --background: var(--night);
+  --foreground: var(--ink);
+  --card: var(--panel);
+  --card-foreground: var(--ink);
+  --popover: var(--panel);
+  --popover-foreground: var(--ink);
+  --primary: var(--gold);
+  --primary-foreground: oklch(0.17 0.025 255);
+  --secondary: var(--panel2);
+  --secondary-foreground: var(--ink);
+  --muted: var(--panel2);
+  --muted-foreground: var(--mist);
+  --accent: var(--teal);
+  --accent-foreground: oklch(0.17 0.025 255);
+  --destructive: var(--crim);
+  --destructive-foreground: var(--ink);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: var(--gold);
 }
 
 @layer base {
@@ -185,6 +225,7 @@
   body {
     font-family: var(--font-sans);
     -webkit-tap-highlight-color: transparent;
+    transition: background-color 180ms ease, color 180ms ease;
   }
   .font-display {
     font-family: var(--font-display);
