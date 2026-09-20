@@ -6,8 +6,9 @@ export type MatchEvent = {
   team: "a" | "b";
   label: string;
   points: number;
-  wicket?: boolean;
-  ball?: boolean;
+  wicket?: boolean | undefined;
+  ball?: boolean | undefined;
+
   player?: string;
   ts: number;
 };
