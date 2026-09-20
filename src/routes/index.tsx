@@ -49,7 +49,7 @@ function Dashboard() {
   return (
     <div className="min-h-screen w-full bg-night text-ink">
       <div className="mx-auto w-full max-w-[880px] pb-10">
-        <header className="flex items-center justify-between px-5 pt-6 pb-3">
+        <header className="flex items-center px-5 pt-6 pb-3">
           <div className="flex min-w-0 items-center gap-2.5">
             <div className="size-9 shrink-0 rounded-xl bg-gradient-to-br from-gold to-crim grid place-items-center">
               <span className="font-display text-night text-lg">LS</span>
@@ -61,12 +61,6 @@ function Dashboard() {
               </div>
             </div>
           </div>
-          <Link
-            to="/history"
-            className="h-10 shrink-0 rounded-full border border-white/10 bg-panel grid place-items-center px-4 text-mist text-[12px] font-semibold"
-          >
-            History
-          </Link>
         </header>
 
         <section className="px-5 pt-2">

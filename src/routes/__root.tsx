@@ -7,11 +7,18 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
+import { History } from "lucide-react";
 import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { ThemeToggle } from "../components/ThemeToggle";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 function NotFoundComponent() {
   return (
@@ -134,7 +141,23 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <Outlet />
-      <ThemeToggle />
+      <div className="fixed right-4 top-4 z-50 flex flex-col items-center gap-2">
+        <ThemeToggle />
+        <TooltipProvider delayDuration={300}>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Link
+                to="/history"
+                className="grid size-11 place-items-center rounded-full border border-border bg-panel text-ink shadow-lg transition-colors hover:bg-panel2 hover:text-ink"
+                aria-label="Match history"
+              >
+                <History aria-hidden="true" className="size-5" />
+              </Link>
+            </TooltipTrigger>
+            <TooltipContent side="bottom">Match history</TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
     </QueryClientProvider>
   );
 }
