@@ -40,12 +40,12 @@ export function ThemeToggle() {
             size="icon"
             onClick={toggleTheme}
             aria-label={label}
-            className="fixed right-4 bottom-4 z-50 size-11 rounded-full border-border bg-panel text-ink shadow-lg hover:bg-panel2 hover:text-ink"
+            className="fixed right-4 top-4 z-50 size-11 rounded-full border-border bg-panel text-ink shadow-lg hover:bg-panel2 hover:text-ink"
           >
             {theme === "dark" ? <Sun aria-hidden="true" /> : <Moon aria-hidden="true" />}
           </Button>
         </TooltipTrigger>
-        <TooltipContent side="left">{label}</TooltipContent>
+        <TooltipContent side="bottom">{label}</TooltipContent>
       </Tooltip>
     </TooltipProvider>
   );
