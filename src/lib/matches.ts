@@ -13,7 +13,7 @@ export type MatchEvent = {
   ts: number;
 };
 
-export type Team = { name: string; players: string[]; logo?: string };
+export type Team = { name: string; players: string[]; logo?: string | undefined };
 
 export type Match = {
   id: string;
