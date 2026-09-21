@@ -190,11 +190,13 @@ function MatchPage() {
             <span className="text-[10px] uppercase tracking-[0.18em] text-mist font-semibold">
               {done
                 ? "Full time"
-                : match.status === "paused"
-                  ? "Paused"
-                  : hasHalves(match.sport)
-                    ? `Half ${currentHalf(match)} · Live`
-                    : "Live"}
+                : firstHalfEnded(match)
+                  ? "1st Half Completed"
+                  : match.status === "paused"
+                    ? `Paused${hasHalves(match.sport) ? ` · Half ${currentHalf(match)} · ${formatClock(halfRemainingSeconds(match))}` : ""}`
+                    : hasHalves(match.sport)
+                      ? `Half ${currentHalf(match)} · Live · ${formatClock(halfRemainingSeconds(match))}`
+                      : "Live"}
             </span>
             <span className="text-[10px] uppercase tracking-[0.18em] text-gold font-semibold">
               {match.date ? new Date(match.date).toLocaleString() : "No date"}
@@ -216,6 +218,25 @@ function MatchPage() {
           <Scorecard match={match} />
         ) : (
           <>
+            {/* Half-time break card */}
+            {firstHalfEnded(match) ? (
+              <div className="mt-5 rounded-3xl bg-gold/10 border border-gold/30 p-5 text-center">
+                <p className="text-[10px] uppercase tracking-[0.18em] text-gold font-semibold">
+                  1st Half Completed
+                </p>
+                <p className="font-display text-[28px] mt-2">
+                  {match.teamA.name} {score(match, "a")} – {score(match, "b")}{" "}
+                  {match.teamB.name}
+                </p>
+                <button
+                  onClick={startSecondHalf}
+                  className="mt-4 w-full rounded-2xl bg-gold text-night font-bold text-[16px] py-4"
+                >
+                  ▶ Start 2nd Half
+                </button>
+              </div>
+            ) : null}
+
             {/* Team selector */}
             <div className="mt-5">
               <p className="text-[10px] uppercase tracking-[0.18em] text-mist font-semibold">
