@@ -41,8 +41,8 @@ function NewMatch() {
     upsertMatch({
       id,
       sport,
-      teamA: { name: teamAName.trim() || "Team A", players: splitPlayers(playersA) },
-      teamB: { name: teamBName.trim() || "Team B", players: splitPlayers(playersB) },
+      teamA: { name: teamAName.trim() || "Team A", players: splitPlayers(playersA), logo: logoA || undefined },
+      teamB: { name: teamBName.trim() || "Team B", players: splitPlayers(playersB), logo: logoB || undefined },
       date,
       venue: venue.trim(),
       status: start ? "live" : "upcoming",
@@ -93,6 +93,7 @@ function NewMatch() {
                 value={teamAName}
                 onChange={(e) => setTeamAName(e.target.value)}
               />
+              <LogoPicker value={logoA} onChange={setLogoA} />
               <textarea
                 className={`${inputCls} min-h-24`}
                 placeholder="Players, one per line"
@@ -108,6 +109,7 @@ function NewMatch() {
                 value={teamBName}
                 onChange={(e) => setTeamBName(e.target.value)}
               />
+              <LogoPicker value={logoB} onChange={setLogoB} />
               <textarea
                 className={`${inputCls} min-h-24`}
                 placeholder="Players, one per line"
