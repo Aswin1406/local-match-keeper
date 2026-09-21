@@ -33,6 +33,8 @@ function NewMatch() {
   const [playersB, setPlayersB] = useState("");
   const [date, setDate] = useState("");
   const [venue, setVenue] = useState("");
+  const [logoA, setLogoA] = useState("");
+  const [logoB, setLogoB] = useState("");
 
   function create(start: boolean) {
     const id = newId();
