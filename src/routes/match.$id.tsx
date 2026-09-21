@@ -4,7 +4,9 @@ import { useMatches } from "@/hooks/useMatches";
 import {
   ACTIONS,
   SPORT_META,
+  currentHalf,
   deleteMatch,
+  hasHalves,
   initials,
   newId,
   overs,
@@ -101,7 +103,13 @@ function MatchPage() {
         <div className="mt-4 rounded-3xl bg-gradient-to-br from-panel2 to-panel border border-white/8 p-5 shadow-[0_20px_60px_-30px_#000]">
           <div className="flex items-center justify-between">
             <span className="text-[10px] uppercase tracking-[0.18em] text-mist font-semibold">
-              {done ? "Full time" : match.status === "paused" ? "Paused" : "Live"}
+              {done
+                ? "Full time"
+                : match.status === "paused"
+                  ? "Paused"
+                  : hasHalves(match.sport)
+                    ? `Half ${currentHalf(match)} · Live`
+                    : "Live"}
             </span>
             <span className="text-[10px] uppercase tracking-[0.18em] text-gold font-semibold">
               {match.date ? new Date(match.date).toLocaleString() : "No date"}
@@ -160,6 +168,28 @@ function MatchPage() {
             </div>
 
             <div className="mt-3 flex items-center gap-2.5">
+              {hasHalves(match.sport) ? (
+                <button
+                  onClick={() =>
+                    update({
+                      half: currentHalf(match) === 1 ? 2 : 1,
+                      events: [
+                        ...match.events,
+                        {
+                          id: newId(),
+                          team,
+                          label: currentHalf(match) === 1 ? "2nd half started" : "Back to 1st half",
+                          points: 0,
+                          ts: Date.now(),
+                        },
+                      ],
+                    })
+                  }
+                  className="flex-1 rounded-xl bg-panel2 border border-teal/30 text-teal font-semibold text-[13px] py-3"
+                >
+                  {currentHalf(match) === 1 ? "▶ Half 2" : "◀ Half 1"}
+                </button>
+              ) : null}
               <button
                 onClick={() =>
                   update({ status: match.status === "paused" ? "live" : "paused" })
