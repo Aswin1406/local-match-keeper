@@ -1,11 +1,14 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useMatches } from "@/hooks/useMatches";
 import {
   ACTIONS,
   SPORT_META,
   currentHalf,
   deleteMatch,
+  firstHalfEnded,
+  formatClock,
+  halfRemainingSeconds,
   hasHalves,
   initials,
   newId,
