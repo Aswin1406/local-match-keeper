@@ -24,6 +24,8 @@ export type Match = {
   venue: string;
   status: Status;
   half?: 1 | 2;
+  halfElapsed?: number | undefined;
+  halfStartedAt?: number | undefined;
   events: MatchEvent[];
   createdAt: number;
 };
@@ -128,6 +130,39 @@ export function hasHalves(sport: Sport) {
 
 export function currentHalf(match: Match): 1 | 2 {
   return match.half ?? 1;
+}
+
+/** Length of one half in seconds (kabaddi 20 min, football 45 min). */
+export const HALF_SECONDS: Record<Sport, number> = {
+  cricket: 0,
+  kabaddi: 20 * 60,
+  football: 45 * 60,
+};
+
+export function halfElapsedSeconds(match: Match): number {
+  const base = match.halfElapsed ?? 0;
+  const running = match.halfStartedAt ? (Date.now() - match.halfStartedAt) / 1000 : 0;
+  return base + running;
+}
+
+export function halfRemainingSeconds(match: Match): number {
+  return Math.max(0, Math.ceil(HALF_SECONDS[match.sport] - halfElapsedSeconds(match)));
+}
+
+export function formatClock(totalSeconds: number): string {
+  const m = Math.floor(totalSeconds / 60);
+  const s = totalSeconds % 60;
+  return `${m}:${String(s).padStart(2, "0")}`;
+}
+
+/** True when the 1st half timer has run out and the match is waiting for half 2. */
+export function firstHalfEnded(match: Match): boolean {
+  return (
+    hasHalves(match.sport) &&
+    currentHalf(match) === 1 &&
+    match.status === "paused" &&
+    halfElapsedSeconds(match) >= HALF_SECONDS[match.sport]
+  );
 }
 
 export function resultText(match: Match) {

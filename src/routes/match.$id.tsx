@@ -1,11 +1,15 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useMatches } from "@/hooks/useMatches";
 import {
   ACTIONS,
+  HALF_SECONDS,
   SPORT_META,
   currentHalf,
   deleteMatch,
+  firstHalfEnded,
+  formatClock,
+  halfRemainingSeconds,
   hasHalves,
   initials,
   newId,
@@ -49,6 +53,38 @@ function MatchPage() {
   const { matches, ready } = useMatches();
   const match = matches.find((m) => m.id === id);
   const [team, setTeam] = useState<"a" | "b">("a");
+  const [, setTick] = useState(0);
+
+  // Half clock for kabaddi/football: ticks every second while live and
+  // auto-ends the half (pause after half 1, complete after half 2).
+  useEffect(() => {
+    if (!match || !hasHalves(match.sport) || match.status !== "live") return;
+    const t = setInterval(() => {
+      setTick((n) => n + 1);
+      if (halfRemainingSeconds(match) <= 0) {
+        const doneMatch: Match = {
+          ...match,
+          halfElapsed: HALF_SECONDS[match.sport],
+          halfStartedAt: undefined,
+          events: [
+            ...match.events,
+            {
+              id: newId(),
+              team: "a",
+              label:
+                currentHalf(match) === 1 ? "1st half completed" : "2nd half completed",
+              points: 0,
+              ts: Date.now(),
+            },
+          ],
+          status: currentHalf(match) === 1 ? "paused" : "completed",
+          half: currentHalf(match),
+        };
+        upsertMatch(doneMatch);
+      }
+    }, 1000);
+    return () => clearInterval(t);
+  }, [match]);
 
   if (!ready) return <div className="min-h-screen bg-night" />;
 
@@ -74,11 +110,61 @@ function MatchPage() {
   }
 
   function addEvent(label: string, points: number, wicket?: boolean, ball?: boolean) {
+    const starting = match!.status === "upcoming";
     update({
-      status: match!.status === "upcoming" ? "live" : match!.status,
+      status: starting ? "live" : match!.status,
+      halfStartedAt:
+        starting && hasHalves(match!.sport) ? Date.now() : match!.halfStartedAt,
       events: [
         ...match!.events,
         { id: newId(), team, label, points, wicket, ball, ts: Date.now() },
+      ],
+    });
+  }
+
+  function togglePause() {
+    if (match!.status === "live") {
+      // Freeze the half clock where it is.
+      const elapsed = hasHalves(match!.sport)
+        ? (match!.halfElapsed ?? 0) +
+          (match!.halfStartedAt ? (Date.now() - match!.halfStartedAt) / 1000 : 0)
+        : match!.halfElapsed;
+      update({ status: "paused", halfElapsed: elapsed, halfStartedAt: undefined });
+    } else if (match!.status === "paused") {
+      update({
+        status: "live",
+        halfStartedAt: hasHalves(match!.sport) ? Date.now() : match!.halfStartedAt,
+      });
+    }
+  }
+
+  function switchHalf(next: 1 | 2) {
+    update({
+      half: next,
+      halfElapsed: 0,
+      halfStartedAt: match!.status === "live" ? Date.now() : undefined,
+      events: [
+        ...match!.events,
+        {
+          id: newId(),
+          team,
+          label: next === 2 ? "2nd half started" : "Back to 1st half",
+          points: 0,
+          ts: Date.now(),
+        },
+      ],
+    });
+  }
+
+  function startSecondHalf() {
+    update({
+      half: 2,
+      halfElapsed: 0,
+      halfStartedAt: Date.now(),
+      status: "live",
+      events: [
+        ...match!.events,
+        { id: newId(), team, label: "2nd half started", points: 0, ts: Date.now() },
       ],
     });
   }
@@ -105,11 +191,13 @@ function MatchPage() {
             <span className="text-[10px] uppercase tracking-[0.18em] text-mist font-semibold">
               {done
                 ? "Full time"
-                : match.status === "paused"
-                  ? "Paused"
-                  : hasHalves(match.sport)
-                    ? `Half ${currentHalf(match)} · Live`
-                    : "Live"}
+                : firstHalfEnded(match)
+                  ? "1st Half Completed"
+                  : match.status === "paused"
+                    ? `Paused${hasHalves(match.sport) ? ` · Half ${currentHalf(match)} · ${formatClock(halfRemainingSeconds(match))}` : ""}`
+                    : hasHalves(match.sport)
+                      ? `Half ${currentHalf(match)} · Live · ${formatClock(halfRemainingSeconds(match))}`
+                      : "Live"}
             </span>
             <span className="text-[10px] uppercase tracking-[0.18em] text-gold font-semibold">
               {match.date ? new Date(match.date).toLocaleString() : "No date"}
@@ -131,6 +219,25 @@ function MatchPage() {
           <Scorecard match={match} />
         ) : (
           <>
+            {/* Half-time break card */}
+            {firstHalfEnded(match) ? (
+              <div className="mt-5 rounded-3xl bg-gold/10 border border-gold/30 p-5 text-center">
+                <p className="text-[10px] uppercase tracking-[0.18em] text-gold font-semibold">
+                  1st Half Completed
+                </p>
+                <p className="font-display text-[28px] mt-2">
+                  {match.teamA.name} {score(match, "a")} – {score(match, "b")}{" "}
+                  {match.teamB.name}
+                </p>
+                <button
+                  onClick={startSecondHalf}
+                  className="mt-4 w-full rounded-2xl bg-gold text-night font-bold text-[16px] py-4"
+                >
+                  ▶ Start 2nd Half
+                </button>
+              </div>
+            ) : null}
+
             {/* Team selector */}
             <div className="mt-5">
               <p className="text-[10px] uppercase tracking-[0.18em] text-mist font-semibold">
@@ -170,30 +277,14 @@ function MatchPage() {
             <div className="mt-3 flex items-center gap-2.5">
               {hasHalves(match.sport) ? (
                 <button
-                  onClick={() =>
-                    update({
-                      half: currentHalf(match) === 1 ? 2 : 1,
-                      events: [
-                        ...match.events,
-                        {
-                          id: newId(),
-                          team,
-                          label: currentHalf(match) === 1 ? "2nd half started" : "Back to 1st half",
-                          points: 0,
-                          ts: Date.now(),
-                        },
-                      ],
-                    })
-                  }
+                  onClick={() => switchHalf(currentHalf(match) === 1 ? 2 : 1)}
                   className="flex-1 rounded-xl bg-panel2 border border-teal/30 text-teal font-semibold text-[13px] py-3"
                 >
                   {currentHalf(match) === 1 ? "▶ Half 2" : "◀ Half 1"}
                 </button>
               ) : null}
               <button
-                onClick={() =>
-                  update({ status: match.status === "paused" ? "live" : "paused" })
-                }
+                onClick={togglePause}
                 className="flex-1 rounded-xl bg-panel2 border border-white/10 text-mist font-semibold text-[13px] py-3"
               >
                 {match.status === "paused" ? "↺ Resume" : "⏸ Pause"}
@@ -319,7 +410,7 @@ function Scorecard({ match }: { match: Match }) {
     <div className="mt-5 space-y-3">
       <div className="rounded-2xl bg-gold/10 border border-gold/25 p-4 text-center">
         <p className="text-[10px] uppercase tracking-[0.18em] text-gold font-semibold">
-          Result
+          {hasHalves(match.sport) ? "Match Completed · Final Score" : "Result"}
         </p>
         <p className="font-display text-[24px] mt-1">{resultText(match)}</p>
       </div>
