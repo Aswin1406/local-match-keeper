@@ -23,11 +23,26 @@ export function MatchCard({ match }: { match: Match }) {
       params={{ id: match.id }}
       className="rounded-2xl bg-panel border border-white/6 p-4 flex items-center gap-3 transition-colors hover:border-gold/30"
     >
-      <div
-        className={`size-11 shrink-0 rounded-xl bg-gradient-to-br border grid place-items-center text-lg ${toneBySport[match.sport]}`}
-      >
-        {meta.icon}
-      </div>
+      {match.teamA.logo || match.teamB.logo ? (
+        <div className="flex shrink-0 -space-x-2">
+          {[match.teamA.logo, match.teamB.logo].map((logo, i) =>
+            logo ? (
+              <img
+                key={i}
+                src={logo}
+                alt=""
+                className="size-9 rounded-full border-2 border-panel object-cover"
+              />
+            ) : null,
+          )}
+        </div>
+      ) : (
+        <div
+          className={`size-11 shrink-0 rounded-xl bg-gradient-to-br border grid place-items-center text-lg ${toneBySport[match.sport]}`}
+        >
+          {meta.icon}
+        </div>
+      )}
       <div className="flex-1 min-w-0">
         <div className="text-[13px] font-bold truncate">
           {match.teamA.name} vs {match.teamB.name}
