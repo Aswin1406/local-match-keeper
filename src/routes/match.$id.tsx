@@ -4,7 +4,9 @@ import { useMatches } from "@/hooks/useMatches";
 import {
   ACTIONS,
   SPORT_META,
+  currentHalf,
   deleteMatch,
+  hasHalves,
   initials,
   newId,
   overs,
@@ -101,7 +103,13 @@ function MatchPage() {
         <div className="mt-4 rounded-3xl bg-gradient-to-br from-panel2 to-panel border border-white/8 p-5 shadow-[0_20px_60px_-30px_#000]">
           <div className="flex items-center justify-between">
             <span className="text-[10px] uppercase tracking-[0.18em] text-mist font-semibold">
-              {done ? "Full time" : match.status === "paused" ? "Paused" : "Live"}
+              {done
+                ? "Full time"
+                : match.status === "paused"
+                  ? "Paused"
+                  : hasHalves(match.sport)
+                    ? `Half ${currentHalf(match)} · Live`
+                    : "Live"}
             </span>
             <span className="text-[10px] uppercase tracking-[0.18em] text-gold font-semibold">
               {match.date ? new Date(match.date).toLocaleString() : "No date"}
