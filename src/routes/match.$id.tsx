@@ -52,6 +52,38 @@ function MatchPage() {
   const { matches, ready } = useMatches();
   const match = matches.find((m) => m.id === id);
   const [team, setTeam] = useState<"a" | "b">("a");
+  const [, setTick] = useState(0);
+
+  // Half clock for kabaddi/football: ticks every second while live and
+  // auto-ends the half (pause after half 1, complete after half 2).
+  useEffect(() => {
+    if (!match || !hasHalves(match.sport) || match.status !== "live") return;
+    const t = setInterval(() => {
+      setTick((n) => n + 1);
+      if (halfRemainingSeconds(match) <= 0) {
+        const doneMatch: Match = {
+          ...match,
+          halfElapsed: undefined,
+          halfStartedAt: undefined,
+          events: [
+            ...match.events,
+            {
+              id: newId(),
+              team: "a",
+              label:
+                currentHalf(match) === 1 ? "1st half completed" : "2nd half completed",
+              points: 0,
+              ts: Date.now(),
+            },
+          ],
+          status: currentHalf(match) === 1 ? "paused" : "completed",
+          half: currentHalf(match),
+        };
+        upsertMatch(doneMatch);
+      }
+    }, 1000);
+    return () => clearInterval(t);
+  }, [match]);
 
   if (!ready) return <div className="min-h-screen bg-night" />;
 
