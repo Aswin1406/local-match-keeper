@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useMatches } from "@/hooks/useMatches";
 import {
   ACTIONS,
+  HALF_SECONDS,
   SPORT_META,
   currentHalf,
   deleteMatch,
@@ -63,7 +64,7 @@ function MatchPage() {
       if (halfRemainingSeconds(match) <= 0) {
         const doneMatch: Match = {
           ...match,
-          halfElapsed: undefined,
+          halfElapsed: HALF_SECONDS[match.sport],
           halfStartedAt: undefined,
           events: [
             ...match.events,
