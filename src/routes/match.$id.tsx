@@ -168,6 +168,28 @@ function MatchPage() {
             </div>
 
             <div className="mt-3 flex items-center gap-2.5">
+              {hasHalves(match.sport) ? (
+                <button
+                  onClick={() =>
+                    update({
+                      half: currentHalf(match) === 1 ? 2 : 1,
+                      events: [
+                        ...match.events,
+                        {
+                          id: newId(),
+                          team,
+                          label: currentHalf(match) === 1 ? "2nd half started" : "Back to 1st half",
+                          points: 0,
+                          ts: Date.now(),
+                        },
+                      ],
+                    })
+                  }
+                  className="flex-1 rounded-xl bg-panel2 border border-teal/30 text-teal font-semibold text-[13px] py-3"
+                >
+                  {currentHalf(match) === 1 ? "▶ Half 2" : "◀ Half 1"}
+                </button>
+              ) : null}
               <button
                 onClick={() =>
                   update({ status: match.status === "paused" ? "live" : "paused" })
