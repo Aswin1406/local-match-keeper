@@ -276,30 +276,14 @@ function MatchPage() {
             <div className="mt-3 flex items-center gap-2.5">
               {hasHalves(match.sport) ? (
                 <button
-                  onClick={() =>
-                    update({
-                      half: currentHalf(match) === 1 ? 2 : 1,
-                      events: [
-                        ...match.events,
-                        {
-                          id: newId(),
-                          team,
-                          label: currentHalf(match) === 1 ? "2nd half started" : "Back to 1st half",
-                          points: 0,
-                          ts: Date.now(),
-                        },
-                      ],
-                    })
-                  }
+                  onClick={() => switchHalf(currentHalf(match) === 1 ? 2 : 1)}
                   className="flex-1 rounded-xl bg-panel2 border border-teal/30 text-teal font-semibold text-[13px] py-3"
                 >
                   {currentHalf(match) === 1 ? "▶ Half 2" : "◀ Half 1"}
                 </button>
               ) : null}
               <button
-                onClick={() =>
-                  update({ status: match.status === "paused" ? "live" : "paused" })
-                }
+                onClick={togglePause}
                 className="flex-1 rounded-xl bg-panel2 border border-white/10 text-mist font-semibold text-[13px] py-3"
               >
                 {match.status === "paused" ? "↺ Resume" : "⏸ Pause"}
@@ -425,7 +409,7 @@ function Scorecard({ match }: { match: Match }) {
     <div className="mt-5 space-y-3">
       <div className="rounded-2xl bg-gold/10 border border-gold/25 p-4 text-center">
         <p className="text-[10px] uppercase tracking-[0.18em] text-gold font-semibold">
-          Result
+          {hasHalves(match.sport) ? "Match Completed · Final Score" : "Result"}
         </p>
         <p className="font-display text-[24px] mt-1">{resultText(match)}</p>
       </div>
