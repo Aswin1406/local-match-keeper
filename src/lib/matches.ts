@@ -23,6 +23,7 @@ export type Match = {
   date: string;
   venue: string;
   status: Status;
+  half?: 1 | 2;
   events: MatchEvent[];
   createdAt: number;
 };
@@ -119,6 +120,14 @@ export function initials(name: string) {
     .slice(0, 2)
     .map((w) => w[0]!.toUpperCase())
     .join("");
+}
+
+export function hasHalves(sport: Sport) {
+  return sport === "kabaddi" || sport === "football";
+}
+
+export function currentHalf(match: Match): 1 | 2 {
+  return match.half ?? 1;
 }
 
 export function resultText(match: Match) {
