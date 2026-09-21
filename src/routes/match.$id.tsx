@@ -109,11 +109,61 @@ function MatchPage() {
   }
 
   function addEvent(label: string, points: number, wicket?: boolean, ball?: boolean) {
+    const starting = match!.status === "upcoming";
     update({
-      status: match!.status === "upcoming" ? "live" : match!.status,
+      status: starting ? "live" : match!.status,
+      halfStartedAt:
+        starting && hasHalves(match!.sport) ? Date.now() : match!.halfStartedAt,
       events: [
         ...match!.events,
         { id: newId(), team, label, points, wicket, ball, ts: Date.now() },
+      ],
+    });
+  }
+
+  function togglePause() {
+    if (match!.status === "live") {
+      // Freeze the half clock where it is.
+      const elapsed = hasHalves(match!.sport)
+        ? (match!.halfElapsed ?? 0) +
+          (match!.halfStartedAt ? (Date.now() - match!.halfStartedAt) / 1000 : 0)
+        : match!.halfElapsed;
+      update({ status: "paused", halfElapsed: elapsed, halfStartedAt: undefined });
+    } else if (match!.status === "paused") {
+      update({
+        status: "live",
+        halfStartedAt: hasHalves(match!.sport) ? Date.now() : match!.halfStartedAt,
+      });
+    }
+  }
+
+  function switchHalf(next: 1 | 2) {
+    update({
+      half: next,
+      halfElapsed: 0,
+      halfStartedAt: match!.status === "live" ? Date.now() : undefined,
+      events: [
+        ...match!.events,
+        {
+          id: newId(),
+          team,
+          label: next === 2 ? "2nd half started" : "Back to 1st half",
+          points: 0,
+          ts: Date.now(),
+        },
+      ],
+    });
+  }
+
+  function startSecondHalf() {
+    update({
+      half: 2,
+      halfElapsed: 0,
+      halfStartedAt: Date.now(),
+      status: "live",
+      events: [
+        ...match!.events,
+        { id: newId(), team, label: "2nd half started", points: 0, ts: Date.now() },
       ],
     });
   }
