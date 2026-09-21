@@ -116,9 +116,9 @@ function MatchPage() {
             </span>
           </div>
           <div className="mt-4 flex items-center justify-between">
-            <Side name={match.teamA.name} tone="crim" line={scoreLine(match, "a")} />
+            <Side name={match.teamA.name} logo={match.teamA.logo} tone="crim" line={scoreLine(match, "a")} />
             <div className="font-display text-[22px] text-mist px-2">v</div>
-            <Side name={match.teamB.name} tone="teal" line={scoreLine(match, "b")} />
+            <Side name={match.teamB.name} logo={match.teamB.logo} tone="teal" line={scoreLine(match, "b")} />
           </div>
           {match.sport === "cricket" ? (
             <div className="mt-3 text-center text-[11px] text-mist">
@@ -266,18 +266,26 @@ function MatchPage() {
   );
 }
 
-function Side({ name, line, tone }: { name: string; line: string; tone: "crim" | "teal" }) {
+function Side({ name, logo, line, tone }: { name: string; logo?: string | undefined; line: string; tone: "crim" | "teal" }) {
   const cls =
     tone === "crim"
       ? "from-crim/30 to-crim/5 border-crim/30"
       : "from-teal/30 to-teal/5 border-teal/30";
   return (
     <div className="flex-1 min-w-0 text-center">
-      <div
-        className={`size-12 rounded-full bg-gradient-to-br border grid place-items-center mx-auto ${cls}`}
-      >
-        <span className="font-display text-[15px]">{initials(name)}</span>
-      </div>
+      {logo ? (
+        <img
+          src={logo}
+          alt={name}
+          className={`size-12 rounded-full border object-cover mx-auto ${tone === "crim" ? "border-crim/30" : "border-teal/30"}`}
+        />
+      ) : (
+        <div
+          className={`size-12 rounded-full bg-gradient-to-br border grid place-items-center mx-auto ${cls}`}
+        >
+          <span className="font-display text-[15px]">{initials(name)}</span>
+        </div>
+      )}
       <div className="text-[12px] font-bold mt-2 truncate px-1">{name}</div>
       <div className="font-display text-[40px] leading-none mt-1">{line}</div>
     </div>

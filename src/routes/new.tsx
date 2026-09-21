@@ -33,14 +33,16 @@ function NewMatch() {
   const [playersB, setPlayersB] = useState("");
   const [date, setDate] = useState("");
   const [venue, setVenue] = useState("");
+  const [logoA, setLogoA] = useState("");
+  const [logoB, setLogoB] = useState("");
 
   function create(start: boolean) {
     const id = newId();
     upsertMatch({
       id,
       sport,
-      teamA: { name: teamAName.trim() || "Team A", players: splitPlayers(playersA) },
-      teamB: { name: teamBName.trim() || "Team B", players: splitPlayers(playersB) },
+      teamA: { name: teamAName.trim() || "Team A", players: splitPlayers(playersA), logo: logoA || undefined },
+      teamB: { name: teamBName.trim() || "Team B", players: splitPlayers(playersB), logo: logoB || undefined },
       date,
       venue: venue.trim(),
       status: start ? "live" : "upcoming",
@@ -91,6 +93,7 @@ function NewMatch() {
                 value={teamAName}
                 onChange={(e) => setTeamAName(e.target.value)}
               />
+              <LogoPicker value={logoA} onChange={setLogoA} />
               <textarea
                 className={`${inputCls} min-h-24`}
                 placeholder="Players, one per line"
@@ -106,6 +109,7 @@ function NewMatch() {
                 value={teamBName}
                 onChange={(e) => setTeamBName(e.target.value)}
               />
+              <LogoPicker value={logoB} onChange={setLogoB} />
               <textarea
                 className={`${inputCls} min-h-24`}
                 placeholder="Players, one per line"
@@ -152,6 +156,61 @@ function NewMatch() {
           </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+function LogoPicker({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  function pick(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        const size = 128;
+        const canvas = document.createElement("canvas");
+        canvas.width = size;
+        canvas.height = size;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) return;
+        const scale = Math.max(size / img.width, size / img.height);
+        const w = img.width * scale;
+        const h = img.height * scale;
+        ctx.drawImage(img, (size - w) / 2, (size - h) / 2, w, h);
+        onChange(canvas.toDataURL("image/png"));
+      };
+      img.src = String(reader.result);
+    };
+    reader.readAsDataURL(file);
+  }
+
+  return (
+    <div className="flex items-center gap-3">
+      {value ? (
+        <img
+          src={value}
+          alt="Team logo"
+          className="size-12 rounded-xl border border-white/10 object-cover"
+        />
+      ) : (
+        <div className="size-12 rounded-xl border border-dashed border-white/15 bg-panel2 grid place-items-center text-mist text-lg">
+          +
+        </div>
+      )}
+      <label className="rounded-xl bg-panel2 border border-white/10 px-3 py-2 text-[12px] font-semibold text-mist cursor-pointer">
+        {value ? "Change logo" : "Upload logo"}
+        <input type="file" accept="image/*" className="hidden" onChange={pick} />
+      </label>
+      {value ? (
+        <button
+          type="button"
+          onClick={() => onChange("")}
+          className="text-[12px] font-semibold text-crim"
+        >
+          Remove
+        </button>
+      ) : null}
     </div>
   );
 }
