@@ -5,6 +5,7 @@ import {
   ACTIONS,
   HALF_SECONDS,
   SPORT_META,
+  cards,
   currentHalf,
   deleteMatch,
   firstHalfEnded,
@@ -12,6 +13,7 @@ import {
   halfRemainingSeconds,
   hasHalves,
   initials,
+  matchElapsedSeconds,
   newId,
   overs,
   resultText,
@@ -109,7 +111,13 @@ function MatchPage() {
     upsertMatch({ ...match!, ...patch });
   }
 
-  function addEvent(label: string, points: number, wicket?: boolean, ball?: boolean) {
+  function addEvent(
+    label: string,
+    points: number,
+    wicket?: boolean,
+    ball?: boolean,
+    card?: "yellow" | "red",
+  ) {
     const starting = match!.status === "upcoming";
     update({
       status: starting ? "live" : match!.status,
@@ -117,7 +125,7 @@ function MatchPage() {
         starting && hasHalves(match!.sport) ? Date.now() : match!.halfStartedAt,
       events: [
         ...match!.events,
-        { id: newId(), team, label, points, wicket, ball, ts: Date.now() },
+        { id: newId(), team, label, points, wicket, ball, card, ts: Date.now() },
       ],
     });
   }
