@@ -170,6 +170,10 @@
   --crim: oklch(0.61 0.21 18);
   --teal: oklch(0.54 0.12 180);
   --lime: oklch(0.7 0.17 130);
+  --yellow-card: oklch(0.83 0.18 95);
+  --yellow-card-foreground: oklch(0.25 0.03 95);
+  --red-card: oklch(0.58 0.22 25);
+  --red-card-foreground: oklch(0.99 0.005 25);
   --background: var(--night);
   --foreground: var(--ink);
   --card: var(--panel);
