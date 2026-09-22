@@ -224,16 +224,12 @@ function MatchPage() {
             </div>
           ) : null}
           {match.sport === "football" ? (
-            <div className="mt-3 flex items-center justify-between text-[12px] text-mist">
-              <span>
-                🟨 {cards(match, "a", "yellow")} · 🟥 {cards(match, "a", "red")}
-              </span>
-              <span className="text-[10px] uppercase tracking-[0.16em] font-semibold">
+            <div className="mt-3 flex items-center justify-between">
+              <TeamCards match={match} team="a" />
+              <span className="text-[10px] uppercase tracking-[0.16em] font-semibold text-mist">
                 Cards
               </span>
-              <span>
-                🟨 {cards(match, "b", "yellow")} · 🟥 {cards(match, "b", "red")}
-              </span>
+              <TeamCards match={match} team="b" />
             </div>
           ) : null}
         </div>
