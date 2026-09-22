@@ -289,7 +289,7 @@ function MatchPage() {
                 <button
                   key={a.label}
                   disabled={match.status === "paused"}
-                  onClick={() => addEvent(a.label, a.points, a.wicket, a.ball)}
+                  onClick={() => addEvent(a.label, a.points, a.wicket, a.ball, a.card)}
                   className={`rounded-2xl py-6 font-bold text-[16px] disabled:opacity-40 ${toneCls[a.tone]}`}
                 >
                   {a.label}
@@ -448,7 +448,9 @@ function Scorecard({ match }: { match: Match }) {
             <p className="mt-1 text-[11px] text-mist">
               {match.sport === "cricket"
                 ? `${score(match, t)} runs · ${wickets(match, t)} wickets · ${overs(match, t)} overs`
-                : `${score(match, t)} ${SPORT_META[match.sport].unit}`}
+                : match.sport === "football"
+                  ? `${score(match, t)} goals · 🟨 ${cards(match, t, "yellow")} · 🟥 ${cards(match, t, "red")}`
+                  : `${score(match, t)} ${SPORT_META[match.sport].unit}`}
             </p>
             {team.players.length > 0 ? (
               <div className="mt-2 flex flex-wrap gap-1.5">
