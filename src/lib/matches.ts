@@ -152,8 +152,9 @@ export function halfRemainingSeconds(match: Match): number {
 }
 
 export function formatClock(totalSeconds: number): string {
-  const m = Math.floor(totalSeconds / 60);
-  const s = totalSeconds % 60;
+  const t = Math.max(0, Math.floor(totalSeconds));
+  const m = Math.floor(t / 60);
+  const s = t % 60;
   return `${m}:${String(s).padStart(2, "0")}`;
 }
 
