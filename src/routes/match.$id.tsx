@@ -203,9 +203,11 @@ function MatchPage() {
                   ? "1st Half Completed"
                   : match.status === "paused"
                     ? `Paused${hasHalves(match.sport) ? ` · Half ${currentHalf(match)} · ${formatClock(halfRemainingSeconds(match))}` : ""}`
-                    : hasHalves(match.sport)
-                      ? `Half ${currentHalf(match)} · Live · ${formatClock(halfRemainingSeconds(match))}`
-                      : "Live"}
+                    : match.sport === "football"
+                      ? `Half ${currentHalf(match)} · ⏱ ${formatClock(matchElapsedSeconds(match))} / 90:00`
+                      : hasHalves(match.sport)
+                        ? `Half ${currentHalf(match)} · Live · ${formatClock(halfRemainingSeconds(match))}`
+                        : "Live"}
             </span>
             <span className="text-[10px] uppercase tracking-[0.18em] text-gold font-semibold">
               {match.date ? new Date(match.date).toLocaleString() : "No date"}
@@ -219,6 +221,19 @@ function MatchPage() {
           {match.sport === "cricket" ? (
             <div className="mt-3 text-center text-[11px] text-mist">
               {overs(match, "a")} overs · {overs(match, "b")} overs
+            </div>
+          ) : null}
+          {match.sport === "football" ? (
+            <div className="mt-3 flex items-center justify-between text-[12px] text-mist">
+              <span>
+                🟨 {cards(match, "a", "yellow")} · 🟥 {cards(match, "a", "red")}
+              </span>
+              <span className="text-[10px] uppercase tracking-[0.16em] font-semibold">
+                Cards
+              </span>
+              <span>
+                🟨 {cards(match, "b", "yellow")} · 🟥 {cards(match, "b", "red")}
+              </span>
             </div>
           ) : null}
         </div>
