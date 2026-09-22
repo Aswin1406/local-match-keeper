@@ -28,6 +28,10 @@
   --color-crim: var(--crim);
   --color-teal: var(--teal);
   --color-lime: var(--lime);
+  --color-yellow-card: var(--yellow-card);
+  --color-yellow-card-foreground: var(--yellow-card-foreground);
+  --color-red-card: var(--red-card);
+  --color-red-card-foreground: var(--red-card-foreground);
   --font-display: "Anton", "Arial Narrow", sans-serif;
   --font-sans: "DM Sans", system-ui, sans-serif;
   --radius-sm: calc(var(--radius) - 4px);
@@ -166,6 +170,10 @@
   --crim: oklch(0.61 0.21 18);
   --teal: oklch(0.54 0.12 180);
   --lime: oklch(0.7 0.17 130);
+  --yellow-card: oklch(0.83 0.18 95);
+  --yellow-card-foreground: oklch(0.25 0.03 95);
+  --red-card: oklch(0.58 0.22 25);
+  --red-card-foreground: oklch(0.99 0.005 25);
   --background: var(--night);
   --foreground: var(--ink);
   --card: var(--panel);
@@ -197,6 +205,10 @@
   --crim: oklch(0.68 0.2 16);
   --teal: oklch(0.78 0.14 180);
   --lime: oklch(0.84 0.2 125);
+  --yellow-card: oklch(0.78 0.16 90);
+  --yellow-card-foreground: oklch(0.18 0.025 90);
+  --red-card: oklch(0.65 0.2 18);
+  --red-card-foreground: oklch(0.99 0.005 18);
   --background: var(--night);
   --foreground: var(--ink);
   --card: var(--panel);

@@ -224,16 +224,12 @@ function MatchPage() {
             </div>
           ) : null}
           {match.sport === "football" ? (
-            <div className="mt-3 flex items-center justify-between text-[12px] text-mist">
-              <span>
-                🟨 {cards(match, "a", "yellow")} · 🟥 {cards(match, "a", "red")}
-              </span>
-              <span className="text-[10px] uppercase tracking-[0.16em] font-semibold">
+            <div className="mt-3 flex items-center justify-between">
+              <TeamCards match={match} team="a" />
+              <span className="text-[10px] uppercase tracking-[0.16em] font-semibold text-mist">
                 Cards
               </span>
-              <span>
-                🟨 {cards(match, "b", "yellow")} · 🟥 {cards(match, "b", "red")}
-              </span>
+              <TeamCards match={match} team="b" />
             </div>
           ) : null}
         </div>
@@ -285,16 +281,26 @@ function MatchPage() {
 
             {/* Action pad */}
             <div className="mt-4 grid grid-cols-2 gap-2.5">
-              {ACTIONS[match.sport].map((a) => (
-                <button
-                  key={a.label}
-                  disabled={match.status === "paused"}
-                  onClick={() => addEvent(a.label, a.points, a.wicket, a.ball, a.card)}
-                  className={`rounded-2xl py-6 font-bold text-[16px] disabled:opacity-40 ${toneCls[a.tone]}`}
-                >
-                  {a.label}
-                </button>
-              ))}
+              {ACTIONS[match.sport].map((a) => {
+                const cls = a.card
+                  ? a.card === "yellow"
+                    ? "bg-yellow-card text-yellow-card-foreground border border-yellow-card-foreground/20 shadow-[0_8px_24px_-10px_var(--yellow-card)]"
+                    : "bg-red-card text-red-card-foreground border border-red-card-foreground/20 shadow-[0_8px_24px_-10px_var(--red-card)]"
+                  : toneCls[a.tone];
+                return (
+                  <button
+                    key={a.label}
+                    disabled={match.status === "paused"}
+                    onClick={() => addEvent(a.label, a.points, a.wicket, a.ball, a.card)}
+                    className={`inline-flex items-center justify-center gap-2 rounded-2xl py-6 font-bold text-[16px] disabled:opacity-40 ${cls}`}
+                  >
+                    {a.card ? (
+                      <span className="h-5 w-3.5 rounded-[2px] bg-current opacity-90" aria-hidden />
+                    ) : null}
+                    {a.label}
+                  </button>
+                );
+              })}
             </div>
 
             <div className="mt-3 flex items-center gap-2.5">
