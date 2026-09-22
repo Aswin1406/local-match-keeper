@@ -5,6 +5,7 @@ import {
   ACTIONS,
   HALF_SECONDS,
   SPORT_META,
+  cards,
   currentHalf,
   deleteMatch,
   firstHalfEnded,
@@ -12,6 +13,7 @@ import {
   halfRemainingSeconds,
   hasHalves,
   initials,
+  matchElapsedSeconds,
   newId,
   overs,
   resultText,
@@ -109,7 +111,13 @@ function MatchPage() {
     upsertMatch({ ...match!, ...patch });
   }
 
-  function addEvent(label: string, points: number, wicket?: boolean, ball?: boolean) {
+  function addEvent(
+    label: string,
+    points: number,
+    wicket?: boolean,
+    ball?: boolean,
+    card?: "yellow" | "red",
+  ) {
     const starting = match!.status === "upcoming";
     update({
       status: starting ? "live" : match!.status,
@@ -117,7 +125,7 @@ function MatchPage() {
         starting && hasHalves(match!.sport) ? Date.now() : match!.halfStartedAt,
       events: [
         ...match!.events,
-        { id: newId(), team, label, points, wicket, ball, ts: Date.now() },
+        { id: newId(), team, label, points, wicket, ball, card, ts: Date.now() },
       ],
     });
   }
@@ -195,9 +203,11 @@ function MatchPage() {
                   ? "1st Half Completed"
                   : match.status === "paused"
                     ? `Paused${hasHalves(match.sport) ? ` · Half ${currentHalf(match)} · ${formatClock(halfRemainingSeconds(match))}` : ""}`
-                    : hasHalves(match.sport)
-                      ? `Half ${currentHalf(match)} · Live · ${formatClock(halfRemainingSeconds(match))}`
-                      : "Live"}
+                    : match.sport === "football"
+                      ? `Half ${currentHalf(match)} · ⏱ ${formatClock(matchElapsedSeconds(match))} / 90:00`
+                      : hasHalves(match.sport)
+                        ? `Half ${currentHalf(match)} · Live · ${formatClock(halfRemainingSeconds(match))}`
+                        : "Live"}
             </span>
             <span className="text-[10px] uppercase tracking-[0.18em] text-gold font-semibold">
               {match.date ? new Date(match.date).toLocaleString() : "No date"}
@@ -211,6 +221,19 @@ function MatchPage() {
           {match.sport === "cricket" ? (
             <div className="mt-3 text-center text-[11px] text-mist">
               {overs(match, "a")} overs · {overs(match, "b")} overs
+            </div>
+          ) : null}
+          {match.sport === "football" ? (
+            <div className="mt-3 flex items-center justify-between text-[12px] text-mist">
+              <span>
+                🟨 {cards(match, "a", "yellow")} · 🟥 {cards(match, "a", "red")}
+              </span>
+              <span className="text-[10px] uppercase tracking-[0.16em] font-semibold">
+                Cards
+              </span>
+              <span>
+                🟨 {cards(match, "b", "yellow")} · 🟥 {cards(match, "b", "red")}
+              </span>
             </div>
           ) : null}
         </div>
@@ -266,7 +289,7 @@ function MatchPage() {
                 <button
                   key={a.label}
                   disabled={match.status === "paused"}
-                  onClick={() => addEvent(a.label, a.points, a.wicket, a.ball)}
+                  onClick={() => addEvent(a.label, a.points, a.wicket, a.ball, a.card)}
                   className={`rounded-2xl py-6 font-bold text-[16px] disabled:opacity-40 ${toneCls[a.tone]}`}
                 >
                   {a.label}
@@ -425,7 +448,9 @@ function Scorecard({ match }: { match: Match }) {
             <p className="mt-1 text-[11px] text-mist">
               {match.sport === "cricket"
                 ? `${score(match, t)} runs · ${wickets(match, t)} wickets · ${overs(match, t)} overs`
-                : `${score(match, t)} ${SPORT_META[match.sport].unit}`}
+                : match.sport === "football"
+                  ? `${score(match, t)} goals · 🟨 ${cards(match, t, "yellow")} · 🟥 ${cards(match, t, "red")}`
+                  : `${score(match, t)} ${SPORT_META[match.sport].unit}`}
             </p>
             {team.players.length > 0 ? (
               <div className="mt-2 flex flex-wrap gap-1.5">

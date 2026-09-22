@@ -8,6 +8,7 @@ export type MatchEvent = {
   points: number;
   wicket?: boolean | undefined;
   ball?: boolean | undefined;
+  card?: "yellow" | "red" | undefined;
 
   player?: string;
   ts: number;
@@ -38,7 +39,7 @@ export const SPORT_META: Record<Sport, { label: string; icon: string; unit: stri
   football: { label: "Football", icon: "⚽", unit: "goals" },
 };
 
-export const ACTIONS: Record<Sport, { label: string; points: number; wicket?: boolean; ball?: boolean; tone: "teal" | "gold" | "panel" | "crim" }[]> = {
+export const ACTIONS: Record<Sport, { label: string; points: number; wicket?: boolean; ball?: boolean; card?: "yellow" | "red"; tone: "teal" | "gold" | "panel" | "crim" }[]> = {
   cricket: [
     { label: "+1 run", points: 1, ball: true, tone: "teal" },
     { label: "+4 runs", points: 4, ball: true, tone: "gold" },
@@ -57,7 +58,8 @@ export const ACTIONS: Record<Sport, { label: string; points: number; wicket?: bo
     { label: "Goal", points: 1, tone: "teal" },
     { label: "Penalty goal", points: 1, tone: "gold" },
     { label: "Own goal", points: 1, tone: "panel" },
-    { label: "Card (no score)", points: 0, tone: "crim" },
+    { label: "Yellow card", points: 0, card: "yellow", tone: "gold" },
+    { label: "Red card", points: 0, card: "red", tone: "crim" },
   ],
 };
 
@@ -150,9 +152,22 @@ export function halfRemainingSeconds(match: Match): number {
 }
 
 export function formatClock(totalSeconds: number): string {
-  const m = Math.floor(totalSeconds / 60);
-  const s = totalSeconds % 60;
+  const t = Math.max(0, Math.floor(totalSeconds));
+  const m = Math.floor(t / 60);
+  const s = t % 60;
   return `${m}:${String(s).padStart(2, "0")}`;
+}
+
+export function cards(match: Match, team: "a" | "b", kind: "yellow" | "red"): number {
+  return match.events.filter((e) => e.team === team && e.card === kind).length;
+}
+
+/** Total match time played, counting up across both halves (0–90 min for football). */
+export function matchElapsedSeconds(match: Match): number {
+  if (!hasHalves(match.sport)) return 0;
+  const perHalf = HALF_SECONDS[match.sport];
+  const inHalf = Math.min(halfElapsedSeconds(match), perHalf);
+  return (currentHalf(match) - 1) * perHalf + inHalf;
 }
 
 /** True when the 1st half timer has run out and the match is waiting for half 2. */
