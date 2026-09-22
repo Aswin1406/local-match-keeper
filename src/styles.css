@@ -28,6 +28,10 @@
   --color-crim: var(--crim);
   --color-teal: var(--teal);
   --color-lime: var(--lime);
+  --color-yellow-card: var(--yellow-card);
+  --color-yellow-card-foreground: var(--yellow-card-foreground);
+  --color-red-card: var(--red-card);
+  --color-red-card-foreground: var(--red-card-foreground);
   --font-display: "Anton", "Arial Narrow", sans-serif;
   --font-sans: "DM Sans", system-ui, sans-serif;
   --radius-sm: calc(var(--radius) - 4px);
