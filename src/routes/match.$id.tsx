@@ -475,7 +475,18 @@ function Timeline({ match }: { match: Match }) {
     <div className="rounded-2xl bg-panel border border-white/6 divide-y divide-white/5">
       {events.map((e) => (
         <div key={e.id} className="flex items-center justify-between gap-3 px-4 py-2.5">
-          <span className="text-[12px] font-bold truncate">{e.label}</span>
+          <span className="flex items-center gap-1.5 text-[12px] font-bold truncate">
+            {e.card ? (
+              <CardIcon
+                className={
+                  e.card === "yellow"
+                    ? "bg-yellow-card h-4 w-3"
+                    : "bg-red-card h-4 w-3"
+                }
+              />
+            ) : null}
+            {e.label}
+          </span>
           <span className="text-[11px] text-mist truncate">
             {e.team === "a" ? match.teamA.name : match.teamB.name}
           </span>
