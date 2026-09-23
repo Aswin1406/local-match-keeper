@@ -451,11 +451,17 @@ function Scorecard({ match }: { match: Match }) {
               <span className="text-[13px] font-bold truncate">{team.name}</span>
               <span className="font-display text-[22px]">{scoreLine(match, t)}</span>
             </div>
-            <p className="mt-1 text-[11px] text-mist">
+            <p className="mt-1 flex items-center gap-2 text-[11px] text-mist">
               {match.sport === "cricket"
                 ? `${score(match, t)} runs · ${wickets(match, t)} wickets · ${overs(match, t)} overs`
                 : match.sport === "football"
-                  ? `${score(match, t)} goals · 🟨 ${cards(match, t, "yellow")} · 🟥 ${cards(match, t, "red")}`
+                  ? (
+                    <>
+                      <span>{score(match, t)} goals</span>
+                      <CardBadge type="yellow" count={cards(match, t, "yellow")} />
+                      <CardBadge type="red" count={cards(match, t, "red")} />
+                    </>
+                  )
                   : `${score(match, t)} ${SPORT_META[match.sport].unit}`}
             </p>
             {team.players.length > 0 ? (
