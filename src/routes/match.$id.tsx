@@ -412,6 +412,57 @@ function Side({ name, logo, line, tone }: { name: string; logo?: string | undefi
   );
 }
 
+function CardIcon({ className }: { className?: string }) {
+  return (
+    <span
+      className={`inline-block rounded-[2px] ${className ?? ""}`}
+      aria-hidden
+    />
+  );
+}
+
+function CardBadge({
+  type,
+  count,
+}: {
+  type: "yellow" | "red";
+  count: number;
+}) {
+  return (
+    <span
+      className={`inline-flex items-center gap-1 rounded-full px-1.5 py-0.5 text-[11px] font-bold ${
+        type === "yellow"
+          ? "bg-yellow-card text-yellow-card-foreground"
+          : "bg-red-card text-red-card-foreground"
+      }`}
+    >
+      <CardIcon
+        className={
+          type === "yellow"
+            ? "bg-yellow-card-foreground h-4 w-3"
+            : "bg-red-card-foreground h-4 w-3"
+        }
+      />
+      {count}
+    </span>
+  );
+}
+
+function TeamCards({
+  match,
+  team,
+}: {
+  match: Match;
+  team: "a" | "b";
+}) {
+  return (
+    <span className="inline-flex items-center gap-1.5">
+      <CardBadge type="yellow" count={cards(match, team, "yellow")} />
+      <CardBadge type="red" count={cards(match, team, "red")} />
+    </span>
+  );
+}
+
 function Timeline({ match }: { match: Match }) {
   const events = [...match.events].reverse().slice(0, 12);
   if (events.length === 0)
