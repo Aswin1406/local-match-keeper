@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useMatches } from "@/hooks/useMatches";
+import { shareScorecard } from "@/lib/shareCard";
 import {
   ACTIONS,
   HALF_SECONDS,
@@ -497,6 +498,23 @@ function Timeline({ match }: { match: Match }) {
 }
 
 function Scorecard({ match }: { match: Match }) {
+  const [sharing, setSharing] = useState(false);
+  const [shared, setShared] = useState<"shared" | "downloaded" | null>(null);
+
+  async function onShare() {
+    if (sharing) return;
+    setSharing(true);
+    try {
+      const how = await shareScorecard(match);
+      setShared(how);
+      setTimeout(() => setShared(null), 2500);
+    } catch {
+      setShared(null);
+    } finally {
+      setSharing(false);
+    }
+  }
+
   return (
     <div className="mt-5 space-y-3">
       <div className="rounded-2xl bg-gold/10 border border-gold/25 p-4 text-center">
@@ -504,6 +522,19 @@ function Scorecard({ match }: { match: Match }) {
           {hasHalves(match.sport) ? "Match Completed · Final Score" : "Result"}
         </p>
         <p className="font-display text-[24px] mt-1">{resultText(match)}</p>
+        <button
+          onClick={onShare}
+          disabled={sharing}
+          className="mt-4 w-full rounded-2xl bg-gold text-night font-bold text-[15px] py-3.5 disabled:opacity-50"
+        >
+          {sharing
+            ? "Preparing card…"
+            : shared === "shared"
+              ? "Shared ✓"
+              : shared === "downloaded"
+                ? "Image saved ✓"
+                : "📤 Share scorecard"}
+        </button>
       </div>
       {(["a", "b"] as const).map((t) => {
         const team = t === "a" ? match.teamA : match.teamB;
