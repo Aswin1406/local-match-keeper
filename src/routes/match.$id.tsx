@@ -412,6 +412,57 @@ function Side({ name, logo, line, tone }: { name: string; logo?: string | undefi
   );
 }
 
+function CardIcon({ className }: { className?: string }) {
+  return (
+    <span
+      className={`inline-block rounded-[2px] ${className ?? ""}`}
+      aria-hidden
+    />
+  );
+}
+
+function CardBadge({
+  type,
+  count,
+}: {
+  type: "yellow" | "red";
+  count: number;
+}) {
+  return (
+    <span
+      className={`inline-flex items-center gap-1 rounded-full px-1.5 py-0.5 text-[11px] font-bold ${
+        type === "yellow"
+          ? "bg-yellow-card text-yellow-card-foreground"
+          : "bg-red-card text-red-card-foreground"
+      }`}
+    >
+      <CardIcon
+        className={
+          type === "yellow"
+            ? "bg-yellow-card-foreground h-4 w-3"
+            : "bg-red-card-foreground h-4 w-3"
+        }
+      />
+      {count}
+    </span>
+  );
+}
+
+function TeamCards({
+  match,
+  team,
+}: {
+  match: Match;
+  team: "a" | "b";
+}) {
+  return (
+    <span className="inline-flex items-center gap-1.5">
+      <CardBadge type="yellow" count={cards(match, team, "yellow")} />
+      <CardBadge type="red" count={cards(match, team, "red")} />
+    </span>
+  );
+}
+
 function Timeline({ match }: { match: Match }) {
   const events = [...match.events].reverse().slice(0, 12);
   if (events.length === 0)
@@ -424,7 +475,18 @@ function Timeline({ match }: { match: Match }) {
     <div className="rounded-2xl bg-panel border border-white/6 divide-y divide-white/5">
       {events.map((e) => (
         <div key={e.id} className="flex items-center justify-between gap-3 px-4 py-2.5">
-          <span className="text-[12px] font-bold truncate">{e.label}</span>
+          <span className="flex items-center gap-1.5 text-[12px] font-bold truncate">
+            {e.card ? (
+              <CardIcon
+                className={
+                  e.card === "yellow"
+                    ? "bg-yellow-card h-4 w-3"
+                    : "bg-red-card h-4 w-3"
+                }
+              />
+            ) : null}
+            {e.label}
+          </span>
           <span className="text-[11px] text-mist truncate">
             {e.team === "a" ? match.teamA.name : match.teamB.name}
           </span>
@@ -451,11 +513,17 @@ function Scorecard({ match }: { match: Match }) {
               <span className="text-[13px] font-bold truncate">{team.name}</span>
               <span className="font-display text-[22px]">{scoreLine(match, t)}</span>
             </div>
-            <p className="mt-1 text-[11px] text-mist">
+            <p className="mt-1 flex items-center gap-2 text-[11px] text-mist">
               {match.sport === "cricket"
                 ? `${score(match, t)} runs · ${wickets(match, t)} wickets · ${overs(match, t)} overs`
                 : match.sport === "football"
-                  ? `${score(match, t)} goals · 🟨 ${cards(match, t, "yellow")} · 🟥 ${cards(match, t, "red")}`
+                  ? (
+                    <>
+                      <span>{score(match, t)} goals</span>
+                      <CardBadge type="yellow" count={cards(match, t, "yellow")} />
+                      <CardBadge type="red" count={cards(match, t, "red")} />
+                    </>
+                  )
                   : `${score(match, t)} ${SPORT_META[match.sport].unit}`}
             </p>
             {team.players.length > 0 ? (
