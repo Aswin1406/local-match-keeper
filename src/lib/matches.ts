@@ -10,7 +10,9 @@ export type MatchEvent = {
   ball?: boolean | undefined;
   card?: "yellow" | "red" | undefined;
 
-  player?: string;
+  player?: string | undefined;
+  /** Cricket: bowler (from the other side) credited with a wicket. */
+  bowler?: string | undefined;
   ts: number;
 };
 
