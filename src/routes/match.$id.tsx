@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { useMatches } from "@/hooks/useMatches";
 import { shareScorecard } from "@/lib/shareCard";
 import { matchInsight } from "@/lib/winProbability";
+import { matchPlayerStats } from "@/lib/playerStats";
+import { PlayerStatsTable } from "@/components/PlayerStatsTable";
 import {
   ACTIONS,
   HALF_SECONDS,
@@ -57,6 +59,8 @@ function MatchPage() {
   const { matches, ready } = useMatches();
   const match = matches.find((m) => m.id === id);
   const [team, setTeam] = useState<"a" | "b">("a");
+  const [player, setPlayer] = useState("");
+  const [bowler, setBowler] = useState("");
   const [, setTick] = useState(0);
 
   // Half clock for kabaddi/football: ticks every second while live and
@@ -108,6 +112,7 @@ function MatchPage() {
   const meta = SPORT_META[match.sport];
   const done = match.status === "completed";
   const activeTeam = team === "a" ? match.teamA : match.teamB;
+  const otherTeam = team === "a" ? match.teamB : match.teamA;
 
   function update(patch: Partial<Match>) {
     upsertMatch({ ...match!, ...patch });
@@ -127,7 +132,18 @@ function MatchPage() {
         starting && hasHalves(match!.sport) ? Date.now() : match!.halfStartedAt,
       events: [
         ...match!.events,
-        { id: newId(), team, label, points, wicket, ball, card, ts: Date.now() },
+        {
+          id: newId(),
+          team,
+          label,
+          points,
+          wicket,
+          ball,
+          card,
+          player: player || undefined,
+          bowler: match!.sport === "cricket" && bowler ? bowler : undefined,
+          ts: Date.now(),
+        },
       ],
     });
   }
@@ -270,7 +286,13 @@ function MatchPage() {
                 {(["a", "b"] as const).map((t) => (
                   <button
                     key={t}
-                    onClick={() => setTeam(t)}
+                    onClick={() => {
+                      if (t !== team) {
+                        setTeam(t);
+                        setPlayer("");
+                        setBowler("");
+                      }
+                    }}
                     className={`rounded-2xl py-4 text-[14px] font-bold truncate px-2 ${
                       team === t
                         ? "bg-gold/15 border border-gold/50 text-gold"
@@ -339,21 +361,20 @@ function MatchPage() {
 
             {/* Players */}
             {activeTeam.players.length > 0 ? (
-              <div className="mt-5 rounded-2xl bg-panel border border-white/6 p-4">
-                <p className="text-[10px] uppercase tracking-[0.16em] text-mist font-semibold">
-                  {activeTeam.name} squad
-                </p>
-                <div className="mt-2 flex flex-wrap gap-1.5">
-                  {activeTeam.players.map((p) => (
-                    <span
-                      key={p}
-                      className="rounded-full bg-panel2 border border-white/8 px-3 py-1 text-[11px] text-ink"
-                    >
-                      {p}
-                    </span>
-                  ))}
-                </div>
-              </div>
+              <PlayerPicker
+                title={`${activeTeam.name} · ${match.sport === "cricket" ? "batter" : "player"} (tap to credit)`}
+                players={activeTeam.players}
+                value={player}
+                onChange={setPlayer}
+              />
+            ) : null}
+            {match.sport === "cricket" && otherTeam.players.length > 0 ? (
+              <PlayerPicker
+                title={`${otherTeam.name} · bowler (gets wickets)`}
+                players={otherTeam.players}
+                value={bowler}
+                onChange={setBowler}
+              />
             ) : null}
 
             {/* Timeline */}
@@ -569,6 +590,8 @@ function Scorecard({ match }: { match: Match }) {
     }
   }
 
+  const playerStats = matchPlayerStats(match);
+
   return (
     <div className="mt-5 space-y-3">
       <div className="rounded-2xl bg-gold/10 border border-gold/25 p-4 text-center">
@@ -611,18 +634,12 @@ function Scorecard({ match }: { match: Match }) {
                   )
                   : `${score(match, t)} ${SPORT_META[match.sport].unit}`}
             </p>
-            {team.players.length > 0 ? (
-              <div className="mt-2 flex flex-wrap gap-1.5">
-                {team.players.map((p) => (
-                  <span
-                    key={p}
-                    className="rounded-full bg-panel2 border border-white/8 px-3 py-1 text-[11px]"
-                  >
-                    {p}
-                  </span>
-                ))}
-              </div>
-            ) : null}
+            <div className="mt-3">
+              <p className="text-[10px] uppercase tracking-[0.16em] text-mist font-semibold mb-1">
+                Player stats
+              </p>
+              <PlayerStatsTable stats={playerStats[t]} sport={match.sport} />
+            </div>
           </div>
         );
       })}
