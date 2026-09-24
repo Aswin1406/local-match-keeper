@@ -235,6 +235,8 @@ function MatchPage() {
           ) : null}
         </div>
 
+        <SmartTarget match={match} />
+
         {done ? (
           <Scorecard match={match} />
         ) : (
