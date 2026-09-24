@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useMatches } from "@/hooks/useMatches";
 import { shareScorecard } from "@/lib/shareCard";
+import { matchInsight } from "@/lib/winProbability";
 import {
   ACTIONS,
   HALF_SECONDS,
@@ -235,6 +236,8 @@ function MatchPage() {
           ) : null}
         </div>
 
+        <SmartTarget match={match} />
+
         {done ? (
           <Scorecard match={match} />
         ) : (
@@ -409,6 +412,57 @@ function Side({ name, logo, line, tone }: { name: string; logo?: string | undefi
       )}
       <div className="text-[12px] font-bold mt-2 truncate px-1">{name}</div>
       <div className="font-display text-[40px] leading-none mt-1">{line}</div>
+    </div>
+  );
+}
+
+function SmartTarget({ match }: { match: Match }) {
+  if (match.status === "upcoming") return null;
+  const { probA, headline, chips } = matchInsight(match);
+  const probB = 100 - probA;
+
+  return (
+    <div className="mt-4 rounded-3xl bg-panel border border-white/8 p-5">
+      <div className="flex items-center justify-between gap-3">
+        <span className="text-[10px] uppercase tracking-[0.18em] text-mist font-semibold">
+          Smart target · Win probability
+        </span>
+      </div>
+
+      <p className="mt-2 font-display text-[20px] leading-tight">{headline}</p>
+
+      <div className="mt-4">
+        <div className="flex items-center justify-between text-[11px] font-bold">
+          <span className="truncate text-crim">
+            {match.teamA.name} {probA}%
+          </span>
+          <span className="truncate text-teal">
+            {probB}% {match.teamB.name}
+          </span>
+        </div>
+        <div className="mt-1.5 h-3 w-full overflow-hidden rounded-full bg-panel2 border border-white/8 flex">
+          <div className="h-full bg-crim" style={{ width: `${probA}%` }} />
+          <div className="h-full bg-teal" style={{ width: `${probB}%` }} />
+        </div>
+      </div>
+
+      <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
+        {chips.map((c) => (
+          <div
+            key={c.label}
+            className="rounded-2xl bg-panel2 border border-white/8 px-3 py-2.5 text-center"
+          >
+            <div className="text-[9px] uppercase tracking-[0.14em] text-mist font-semibold">
+              {c.label}
+            </div>
+            <div className="text-[14px] font-bold mt-0.5 truncate">{c.value}</div>
+          </div>
+        ))}
+      </div>
+
+      <p className="mt-3 text-[10px] text-mist">
+        Estimated from the score, time or balls left — a guide, not a guarantee.
+      </p>
     </div>
   );
 }
