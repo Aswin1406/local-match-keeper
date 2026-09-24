@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useMatches } from "@/hooks/useMatches";
 import { shareScorecard } from "@/lib/shareCard";
+import { matchInsight } from "@/lib/winProbability";
 import {
   ACTIONS,
   HALF_SECONDS,
