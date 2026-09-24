@@ -1,7 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMatches } from "@/hooks/useMatches";
 import { MatchCard } from "@/components/MatchCard";
-import { resultText } from "@/lib/matches";
+import { resultText, SPORT_META } from "@/lib/matches";
+import { careerStats } from "@/lib/playerStats";
+import { PlayerStatsTable } from "@/components/PlayerStatsTable";
 
 export const Route = createFileRoute("/history")({
   head: () => ({
@@ -24,6 +26,7 @@ export const Route = createFileRoute("/history")({
 function History() {
   const { matches } = useMatches();
   const done = matches.filter((m) => m.status === "completed");
+  const career = careerStats(done);
 
   return (
     <div className="min-h-screen w-full bg-night text-ink">
@@ -53,6 +56,20 @@ function History() {
             ))
           )}
         </div>
+
+        {(["cricket", "kabaddi", "football"] as const).map((sport) => {
+          const stats = career.filter((s) => s.sport === sport);
+          if (stats.length === 0) return null;
+          return (
+            <section key={sport} className="mt-8 rounded-2xl border border-white/6 bg-panel p-4">
+              <h2 className="font-display text-[20px]">
+                {SPORT_META[sport].icon} {SPORT_META[sport].label} player stats
+              </h2>
+              <p className="mb-2 text-[11px] text-mist">Totals across finished matches.</p>
+              <PlayerStatsTable stats={stats} sport={sport} showApps showTeam />
+            </section>
+          );
+        })}
       </div>
     </div>
   );

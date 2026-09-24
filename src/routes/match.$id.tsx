@@ -647,3 +647,35 @@ function Scorecard({ match }: { match: Match }) {
     </div>
   );
 }
+
+function PlayerPicker({
+  title,
+  players,
+  value,
+  onChange,
+}: {
+  title: string;
+  players: string[];
+  value: string;
+  onChange: (v: string) => void;
+}) {
+  return (
+    <div className="mt-5 rounded-2xl bg-panel border border-white/6 p-4">
+      <p className="text-[10px] uppercase tracking-[0.16em] text-mist font-semibold">{title}</p>
+      <div className="mt-2 flex flex-wrap gap-1.5">
+        {players.map((p) => (
+          <button
+            key={p}
+            type="button"
+            onClick={() => onChange(value === p ? "" : p)}
+            className={`rounded-full px-3.5 py-2 text-[12px] font-semibold border ${
+              value === p ? "bg-gold/15 border-gold/50 text-gold" : "bg-panel2 border-white/8 text-ink"
+            }`}
+          >
+            {p}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
