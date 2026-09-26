@@ -36,13 +36,23 @@ function NewMatch() {
   const [logoA, setLogoA] = useState("");
   const [logoB, setLogoB] = useState("");
 
+  type FormErrors = { teamA?: string | undefined; teamB?: string | undefined; date?: string | undefined };
+  const [errors, setErrors] = useState<FormErrors>({});
+
   function create(start: boolean) {
+    const next: FormErrors = {};
+    if (!teamAName.trim()) next.teamA = "Team A name is required";
+    if (!teamBName.trim()) next.teamB = "Team B name is required";
+    if (!date) next.date = "Match date & time is required";
+    setErrors(next);
+    if (Object.keys(next).length > 0) return;
+
     const id = newId();
     upsertMatch({
       id,
       sport,
-      teamA: { name: teamAName.trim() || "Team A", players: splitPlayers(playersA), logo: logoA || undefined },
-      teamB: { name: teamBName.trim() || "Team B", players: splitPlayers(playersB), logo: logoB || undefined },
+      teamA: { name: teamAName.trim(), players: splitPlayers(playersA), logo: logoA || undefined },
+      teamB: { name: teamBName.trim(), players: splitPlayers(playersB), logo: logoB || undefined },
       date,
       venue: venue.trim(),
       status: start ? "live" : "upcoming",
@@ -86,13 +96,19 @@ function NewMatch() {
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <p className={labelCls}>Team A</p>
+              <p className={labelCls}>
+                Team A <span className="text-crim">*</span>
+              </p>
               <input
-                className={inputCls}
+                className={`${inputCls} ${errors.teamA ? "border-crim/60" : ""}`}
                 placeholder="Team name"
                 value={teamAName}
-                onChange={(e) => setTeamAName(e.target.value)}
+                onChange={(e) => {
+                  setTeamAName(e.target.value);
+                  if (errors.teamA) setErrors((p) => ({ ...p, teamA: undefined }));
+                }}
               />
+              {errors.teamA ? <p className="text-[12px] font-semibold text-crim">{errors.teamA}</p> : null}
               <LogoPicker value={logoA} onChange={setLogoA} />
               <textarea
                 className={`${inputCls} min-h-24`}
@@ -102,13 +118,19 @@ function NewMatch() {
               />
             </div>
             <div className="space-y-2">
-              <p className={labelCls}>Team B</p>
+              <p className={labelCls}>
+                Team B <span className="text-crim">*</span>
+              </p>
               <input
-                className={inputCls}
+                className={`${inputCls} ${errors.teamB ? "border-crim/60" : ""}`}
                 placeholder="Team name"
                 value={teamBName}
-                onChange={(e) => setTeamBName(e.target.value)}
+                onChange={(e) => {
+                  setTeamBName(e.target.value);
+                  if (errors.teamB) setErrors((p) => ({ ...p, teamB: undefined }));
+                }}
               />
+              {errors.teamB ? <p className="text-[12px] font-semibold text-crim">{errors.teamB}</p> : null}
               <LogoPicker value={logoB} onChange={setLogoB} />
               <textarea
                 className={`${inputCls} min-h-24`}
@@ -121,13 +143,19 @@ function NewMatch() {
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <p className={labelCls}>Date &amp; time</p>
+              <p className={labelCls}>
+                Date &amp; time <span className="text-crim">*</span>
+              </p>
               <input
                 type="datetime-local"
-                className={inputCls}
+                className={`${inputCls} ${errors.date ? "border-crim/60" : ""}`}
                 value={date}
-                onChange={(e) => setDate(e.target.value)}
+                onChange={(e) => {
+                  setDate(e.target.value);
+                  if (errors.date) setErrors((p) => ({ ...p, date: undefined }));
+                }}
               />
+              {errors.date ? <p className="text-[12px] font-semibold text-crim">{errors.date}</p> : null}
             </div>
             <div className="space-y-2">
               <p className={labelCls}>Venue</p>
