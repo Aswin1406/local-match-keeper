@@ -142,13 +142,19 @@ function NewMatch() {
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <p className={labelCls}>Date &amp; time</p>
+              <p className={labelCls}>
+                Date &amp; time <span className="text-crim">*</span>
+              </p>
               <input
                 type="datetime-local"
-                className={inputCls}
+                className={`${inputCls} ${errors.date ? "border-crim/60" : ""}`}
                 value={date}
-                onChange={(e) => setDate(e.target.value)}
+                onChange={(e) => {
+                  setDate(e.target.value);
+                  if (errors.date) setErrors((p) => ({ ...p, date: undefined }));
+                }}
               />
+              {errors.date ? <p className="text-[12px] font-semibold text-crim">{errors.date}</p> : null}
             </div>
             <div className="space-y-2">
               <p className={labelCls}>Venue</p>
