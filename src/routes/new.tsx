@@ -36,13 +36,22 @@ function NewMatch() {
   const [logoA, setLogoA] = useState("");
   const [logoB, setLogoB] = useState("");
 
+  const [errors, setErrors] = useState<{ teamA?: string; teamB?: string; date?: string }>({});
+
   function create(start: boolean) {
+    const next: { teamA?: string; teamB?: string; date?: string } = {};
+    if (!teamAName.trim()) next.teamA = "Team A name is required";
+    if (!teamBName.trim()) next.teamB = "Team B name is required";
+    if (!date) next.date = "Match date & time is required";
+    setErrors(next);
+    if (Object.keys(next).length > 0) return;
+
     const id = newId();
     upsertMatch({
       id,
       sport,
-      teamA: { name: teamAName.trim() || "Team A", players: splitPlayers(playersA), logo: logoA || undefined },
-      teamB: { name: teamBName.trim() || "Team B", players: splitPlayers(playersB), logo: logoB || undefined },
+      teamA: { name: teamAName.trim(), players: splitPlayers(playersA), logo: logoA || undefined },
+      teamB: { name: teamBName.trim(), players: splitPlayers(playersB), logo: logoB || undefined },
       date,
       venue: venue.trim(),
       status: start ? "live" : "upcoming",
