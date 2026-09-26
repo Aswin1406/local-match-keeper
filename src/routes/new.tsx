@@ -36,10 +36,11 @@ function NewMatch() {
   const [logoA, setLogoA] = useState("");
   const [logoB, setLogoB] = useState("");
 
-  const [errors, setErrors] = useState<{ teamA?: string; teamB?: string; date?: string }>({});
+  type FormErrors = { teamA?: string | undefined; teamB?: string | undefined; date?: string | undefined };
+  const [errors, setErrors] = useState<FormErrors>({});
 
   function create(start: boolean) {
-    const next: { teamA?: string; teamB?: string; date?: string } = {};
+    const next: FormErrors = {};
     if (!teamAName.trim()) next.teamA = "Team A name is required";
     if (!teamBName.trim()) next.teamB = "Team B name is required";
     if (!date) next.date = "Match date & time is required";
