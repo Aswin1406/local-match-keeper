@@ -95,13 +95,19 @@ function NewMatch() {
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <p className={labelCls}>Team A</p>
+              <p className={labelCls}>
+                Team A <span className="text-crim">*</span>
+              </p>
               <input
-                className={inputCls}
+                className={`${inputCls} ${errors.teamA ? "border-crim/60" : ""}`}
                 placeholder="Team name"
                 value={teamAName}
-                onChange={(e) => setTeamAName(e.target.value)}
+                onChange={(e) => {
+                  setTeamAName(e.target.value);
+                  if (errors.teamA) setErrors((p) => ({ ...p, teamA: undefined }));
+                }}
               />
+              {errors.teamA ? <p className="text-[12px] font-semibold text-crim">{errors.teamA}</p> : null}
               <LogoPicker value={logoA} onChange={setLogoA} />
               <textarea
                 className={`${inputCls} min-h-24`}
@@ -111,13 +117,19 @@ function NewMatch() {
               />
             </div>
             <div className="space-y-2">
-              <p className={labelCls}>Team B</p>
+              <p className={labelCls}>
+                Team B <span className="text-crim">*</span>
+              </p>
               <input
-                className={inputCls}
+                className={`${inputCls} ${errors.teamB ? "border-crim/60" : ""}`}
                 placeholder="Team name"
                 value={teamBName}
-                onChange={(e) => setTeamBName(e.target.value)}
+                onChange={(e) => {
+                  setTeamBName(e.target.value);
+                  if (errors.teamB) setErrors((p) => ({ ...p, teamB: undefined }));
+                }}
               />
+              {errors.teamB ? <p className="text-[12px] font-semibold text-crim">{errors.teamB}</p> : null}
               <LogoPicker value={logoB} onChange={setLogoB} />
               <textarea
                 className={`${inputCls} min-h-24`}
