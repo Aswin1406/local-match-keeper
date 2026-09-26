@@ -8,3 +8,6 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+## Architecture
+- Source code is plain JavaScript (.js/.jsx); tsconfig has allowJs + checkJs:false. Exceptions that MUST stay .ts because the framework hardcodes the filenames: src/server.ts, src/start.ts, src/routeTree.gen.ts (generated), vite.config.ts.
