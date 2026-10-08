@@ -29,24 +29,36 @@ function ErrorComponent({ error, reset }) {
         reportLovableError(error, { boundary: "tanstack_root_error_component" });
     }, [error]);
     return (<div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="max-w-md text-center">
-        <h1 className="text-xl font-semibold tracking-tight text-foreground">
+      <div className="w-full max-w-md rounded-2xl border border-border bg-panel p-6 text-center shadow-xl">
+        <div className="mx-auto grid size-14 place-items-center rounded-full bg-primary/15 text-3xl">
+          🏟️
+        </div>
+        <h1 className="mt-4 text-xl font-bold tracking-tight text-foreground">
           This page didn't load
         </h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Something went wrong on our end. You can try refreshing or head back home.
+          Something went wrong while opening this page. Don't worry — your
+          matches are saved safely on this device and nothing is lost.
         </p>
-        <div className="mt-6 flex flex-wrap justify-center gap-2">
+        <div className="mt-6 flex flex-col gap-2">
+          <button onClick={() => window.location.reload()} className="inline-flex min-h-12 items-center justify-center rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90">
+            Refresh page
+          </button>
           <button onClick={() => {
             router.invalidate();
             reset();
-        }} className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90">
-            Try again
+        }} className="inline-flex min-h-12 items-center justify-center rounded-xl border border-border bg-panel2 px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent">
+            Try again without refreshing
           </button>
-          <a href="/" className="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent">
-            Go home
+          <a href="/" className="inline-flex min-h-12 items-center justify-center rounded-xl border border-border px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground">
+            Back to dashboard
           </a>
         </div>
+        <p className="mt-5 text-xs leading-relaxed text-muted-foreground">
+          If this keeps happening, check your internet connection, then refresh
+          once more. A match that was only created on another device won't open
+          here — head back to the dashboard to see the matches on this device.
+        </p>
       </div>
     </div>);
 }
