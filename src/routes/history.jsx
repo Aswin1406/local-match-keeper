@@ -1,9 +1,41 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useRef, useState } from "react";
+import { Download, Upload } from "lucide-react";
 import { useMatches } from "@/hooks/useMatches";
 import { MatchCard } from "@/components/MatchCard";
-import { resultText, SPORT_META } from "@/lib/matches";
+import { loadMatches, resultText, saveMatches, SPORT_META } from "@/lib/matches";
 import { careerStats } from "@/lib/playerStats";
 import { PlayerStatsTable } from "@/components/PlayerStatsTable";
+
+function exportMatches() {
+    const data = JSON.stringify(loadMatches(), null, 2);
+    const blob = new Blob([data], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `localscore-backup-${new Date().toISOString().slice(0, 10)}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
+function isValidMatch(m) {
+    return (m && typeof m.id === "string" && typeof m.sport === "string" &&
+        m.teamA && m.teamB && Array.isArray(m.events));
+}
+
+/** Merge imported matches into stored ones; existing ids are kept (not overwritten). Returns counts. */
+function importMatches(list) {
+    if (!Array.isArray(list))
+        return null;
+    const valid = list.filter(isValidMatch);
+    if (valid.length === 0)
+        return null;
+    const existing = loadMatches();
+    const ids = new Set(existing.map((m) => m.id));
+    const added = valid.filter((m) => !ids.has(m.id));
+    saveMatches([...added, ...existing]);
+    return { added: added.length, skipped: valid.length - added.length };
+}
 export const Route = createFileRoute("/history")({
     head: () => ({
         meta: [
