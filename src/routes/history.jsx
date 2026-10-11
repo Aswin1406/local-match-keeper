@@ -57,6 +57,27 @@ function History() {
     const { matches } = useMatches();
     const done = matches.filter((m) => m.status === "completed");
     const career = careerStats(done);
+    const fileRef = useRef(null);
+    const [notice, setNotice] = useState("");
+    const onImportFile = async (e) => {
+        const file = e.target.files?.[0];
+        e.target.value = "";
+        if (!file)
+            return;
+        try {
+            const parsed = JSON.parse(await file.text());
+            const result = importMatches(parsed);
+            if (!result)
+                setNotice("That file doesn't look like a LocalScore backup.");
+            else
+                setNotice(result.added > 0
+                    ? `Restored ${result.added} match${result.added === 1 ? "" : "es"}${result.skipped ? ` (${result.skipped} already here)` : ""}.`
+                    : "All matches in that file are already on this device.");
+        }
+        catch {
+            setNotice("Couldn't read that file — please choose a LocalScore backup (.json).");
+        }
+    };
     return (<div className="min-h-screen w-full bg-night text-ink">
       <div className="mx-auto w-full max-w-[880px] px-5 pt-6 pb-12">
         <div className="flex items-center justify-between">
