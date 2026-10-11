@@ -91,6 +91,17 @@ function History() {
         </h1>
         <p className="mt-2 text-[13px] text-mist">Saved on this device.</p>
 
+        <div className="mt-4 flex flex-wrap items-center gap-2">
+          <button onClick={exportMatches} className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-gold px-4 text-[13px] font-bold text-night transition-opacity hover:opacity-90">
+            <Download className="size-4" aria-hidden="true"/> Export backup
+          </button>
+          <button onClick={() => fileRef.current?.click()} className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-white/10 bg-panel px-4 text-[13px] font-bold text-ink transition-colors hover:bg-panel2">
+            <Upload className="size-4" aria-hidden="true"/> Import backup
+          </button>
+          <input ref={fileRef} type="file" accept="application/json,.json" className="hidden" onChange={onImportFile}/>
+          {notice && <p className="w-full text-[12px] text-mist">{notice}</p>}
+        </div>
+
         <div className="mt-6 space-y-2.5 sm:grid sm:grid-cols-2 sm:gap-2.5 sm:space-y-0">
           {done.length === 0 ? (<div className="rounded-2xl border border-white/6 bg-panel p-6 text-center text-[13px] text-mist">
               No completed matches yet.
