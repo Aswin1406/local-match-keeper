@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { SPORT_META, newId, upsertMatch } from "@/lib/matches";
+import { STICKERS } from "@/lib/stickers";
 export const Route = createFileRoute("/new")({
     head: () => ({
         meta: [
@@ -76,7 +77,7 @@ function NewMatch() {
               {Object.keys(SPORT_META).map((s) => (<button key={s} onClick={() => setSport(s)} className={`rounded-2xl border py-4 text-[13px] font-bold ${sport === s
                 ? "border-gold/50 bg-gold/15 text-gold"
                 : "border-white/8 bg-panel text-mist"}`}>
-                  <span className="block text-xl">{SPORT_META[s].icon}</span>
+                  <img src={STICKERS[s]} alt="" width={816} height={816} loading="lazy" className={`mx-auto mb-1 size-14 object-contain drop-shadow-md transition-transform ${sport === s ? "scale-110 -rotate-6" : ""}`}/>
                   {SPORT_META[s].label}
                 </button>))}
             </div>
