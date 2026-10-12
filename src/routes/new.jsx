@@ -32,6 +32,7 @@ function NewMatch() {
     const [venue, setVenue] = useState("");
     const [logoA, setLogoA] = useState("");
     const [logoB, setLogoB] = useState("");
+    const [overs, setOvers] = useState("20");
     const [errors, setErrors] = useState({});
     function create(start) {
         const next = {};
@@ -52,6 +53,7 @@ function NewMatch() {
             teamB: { name: teamBName.trim(), players: splitPlayers(playersB), logo: logoB || undefined },
             date,
             venue: venue.trim(),
+            overs: sport === "cricket" ? Math.max(1, Math.floor(Number(overs) || 20)) : undefined,
             status: start ? "live" : "upcoming",
             events: [],
             createdAt: Date.now(),
