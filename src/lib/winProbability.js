@@ -10,14 +10,15 @@ function cricketInsight(match) {
     const b = score(match, "b");
     const ballsA = balls(match, "a");
     const ballsB = balls(match, "b");
+    const totalBalls = matchOvers(match) * 6;
     const chasing = ballsB > 0;
     if (!chasing) {
-        const ballsLeft = Math.max(0, CRICKET_BALLS - ballsA);
+        const ballsLeft = Math.max(0, totalBalls - ballsA);
         const rr = ballsA > 0 ? a / (ballsA / 6) : 0;
         const projected = Math.round(a + (rr * ballsLeft) / 6);
         return {
             probA: 50,
-            headline: `${match.teamA.name} projected ${projected} in ${CRICKET_OVERS} overs`,
+            headline: `${match.teamA.name} projected ${projected} in ${matchOvers(match)} overs`,
             chips: [
                 { label: "Run rate", value: rr.toFixed(2) },
                 { label: "Balls left", value: String(ballsLeft) },
