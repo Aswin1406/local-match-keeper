@@ -3,6 +3,7 @@ import { useMemo, useState } from "react";
 import { useMatches } from "@/hooks/useMatches";
 import { MatchCard } from "@/components/MatchCard";
 import { SPORT_META, initials, overs, scoreLine, } from "@/lib/matches";
+import { STICKERS } from "@/lib/stickers";
 export const Route = createFileRoute("/")({
     head: () => ({
         meta: [
@@ -48,7 +49,12 @@ function Dashboard() {
           </div>
         </header>
 
-        <section className="px-5 pt-2">
+        <section className="relative px-5 pt-2">
+          <div aria-hidden className="pointer-events-none absolute right-3 top-8 w-[150px] h-[170px] sm:w-[230px] sm:right-8">
+            <img src={STICKERS.cricket} alt="" width={816} height={816} className="absolute right-0 top-0 size-20 sm:size-28 rotate-12 drop-shadow-lg"/>
+            <img src={STICKERS.football} alt="" width={816} height={816} className="absolute left-0 top-10 size-16 sm:size-24 -rotate-12 drop-shadow-lg"/>
+            <img src={STICKERS.kabaddi} alt="" width={816} height={816} className="absolute right-6 bottom-0 size-20 sm:size-28 rotate-3 drop-shadow-lg"/>
+          </div>
           <div className="inline-flex items-center gap-2 rounded-full bg-crim/10 border border-crim/25 px-3 py-1.5">
             <span className="size-1.5 rounded-full bg-crim"/>
             <span className="text-[10px] uppercase tracking-[0.2em] font-semibold text-crim">
