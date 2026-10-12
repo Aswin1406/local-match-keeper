@@ -50,10 +50,10 @@ function Dashboard() {
         </header>
 
         <section className="relative px-5 pt-2">
-          <div aria-hidden className="pointer-events-none absolute right-3 top-8 w-[150px] h-[170px] sm:w-[230px] sm:right-8">
-            <img src={STICKERS.cricket} alt="" width={816} height={816} className="absolute right-0 top-0 size-20 sm:size-28 rotate-12 drop-shadow-lg"/>
-            <img src={STICKERS.football} alt="" width={816} height={816} className="absolute left-0 top-10 size-16 sm:size-24 -rotate-12 drop-shadow-lg"/>
-            <img src={STICKERS.kabaddi} alt="" width={816} height={816} className="absolute right-6 bottom-0 size-20 sm:size-28 rotate-3 drop-shadow-lg"/>
+          <div aria-hidden className="pointer-events-none absolute right-2 top-16 w-[150px] h-[170px] sm:right-6 sm:top-20 sm:w-[250px] sm:h-[230px] md:right-10 md:w-[330px] md:h-[290px]">
+            <img src={STICKERS.cricket} alt="" width={816} height={816} className="absolute right-0 top-0 size-20 sm:size-28 md:size-36 rotate-12 drop-shadow-lg"/>
+            <img src={STICKERS.football} alt="" width={816} height={816} className="absolute left-0 top-12 size-16 sm:top-16 sm:size-24 md:top-20 md:size-32 -rotate-12 drop-shadow-lg"/>
+            <img src={STICKERS.kabaddi} alt="" width={816} height={816} className="absolute right-4 bottom-0 size-20 sm:right-8 sm:size-28 md:right-10 md:size-36 rotate-3 drop-shadow-lg"/>
           </div>
           <div className="inline-flex items-center gap-2 rounded-full bg-crim/10 border border-crim/25 px-3 py-1.5">
             <span className="size-1.5 rounded-full bg-crim"/>
