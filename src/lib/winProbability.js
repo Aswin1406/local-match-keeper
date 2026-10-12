@@ -1,7 +1,4 @@
-import { HALF_SECONDS, balls, hasHalves, matchElapsedSeconds, score, wickets, } from "./matches";
-/** Overs per side assumed for a local cricket game. */
-export const CRICKET_OVERS = 20;
-const CRICKET_BALLS = CRICKET_OVERS * 6;
+import { HALF_SECONDS, balls, hasHalves, matchElapsedSeconds, matchOvers, score, wickets, } from "./matches";
 function sigmoid(z) {
     return 1 / (1 + Math.exp(-z));
 }
@@ -13,14 +10,15 @@ function cricketInsight(match) {
     const b = score(match, "b");
     const ballsA = balls(match, "a");
     const ballsB = balls(match, "b");
+    const totalBalls = matchOvers(match) * 6;
     const chasing = ballsB > 0;
     if (!chasing) {
-        const ballsLeft = Math.max(0, CRICKET_BALLS - ballsA);
+        const ballsLeft = Math.max(0, totalBalls - ballsA);
         const rr = ballsA > 0 ? a / (ballsA / 6) : 0;
         const projected = Math.round(a + (rr * ballsLeft) / 6);
         return {
             probA: 50,
-            headline: `${match.teamA.name} projected ${projected} in ${CRICKET_OVERS} overs`,
+            headline: `${match.teamA.name} projected ${projected} in ${matchOvers(match)} overs`,
             chips: [
                 { label: "Run rate", value: rr.toFixed(2) },
                 { label: "Balls left", value: String(ballsLeft) },
@@ -30,7 +28,7 @@ function cricketInsight(match) {
     }
     const target = a + 1;
     const need = target - b;
-    const ballsLeft = Math.max(0, CRICKET_BALLS - ballsB);
+    const ballsLeft = Math.max(0, totalBalls - ballsB);
     const wktLeft = Math.max(0, 10 - wickets(match, "b"));
     const reqRR = ballsLeft > 0 ? need / (ballsLeft / 6) : Infinity;
     const currRR = ballsB > 0 ? b / (ballsB / 6) : 0;

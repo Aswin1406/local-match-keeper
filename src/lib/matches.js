@@ -72,6 +72,11 @@ export function overs(match, team) {
     const b = balls(match, team);
     return `${Math.floor(b / 6)}.${b % 6}`;
 }
+/** Total overs per innings for a cricket match (set at creation, default 20). */
+export function matchOvers(match) {
+    const o = Number(match.overs);
+    return Number.isFinite(o) && o > 0 ? Math.floor(o) : 20;
+}
 export function scoreLine(match, team) {
     const s = score(match, team);
     return match.sport === "cricket" ? `${s}/${wickets(match, team)}` : `${s}`;
