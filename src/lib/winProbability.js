@@ -28,7 +28,7 @@ function cricketInsight(match) {
     }
     const target = a + 1;
     const need = target - b;
-    const ballsLeft = Math.max(0, CRICKET_BALLS - ballsB);
+    const ballsLeft = Math.max(0, totalBalls - ballsB);
     const wktLeft = Math.max(0, 10 - wickets(match, "b"));
     const reqRR = ballsLeft > 0 ? need / (ballsLeft / 6) : Infinity;
     const currRR = ballsB > 0 ? b / (ballsB / 6) : 0;
