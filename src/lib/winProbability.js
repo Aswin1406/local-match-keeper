@@ -1,7 +1,4 @@
-import { HALF_SECONDS, balls, hasHalves, matchElapsedSeconds, score, wickets, } from "./matches";
-/** Overs per side assumed for a local cricket game. */
-export const CRICKET_OVERS = 20;
-const CRICKET_BALLS = CRICKET_OVERS * 6;
+import { HALF_SECONDS, balls, hasHalves, matchElapsedSeconds, matchOvers, score, wickets, } from "./matches";
 function sigmoid(z) {
     return 1 / (1 + Math.exp(-z));
 }
