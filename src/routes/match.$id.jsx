@@ -248,6 +248,7 @@ function MatchPage() {
                     ? "bg-gold/15 border border-gold/50 text-gold"
                     : "bg-panel border border-white/8 text-mist"}`}>
                     {t === "a" ? match.teamA.name : match.teamB.name}
+                    {match.sport === "cricket" && battingFirst(match) === t ? (<span className="ml-1 text-[10px] font-bold text-gold/80">· bat</span>) : null}
                   </button>))}
               </div>
             </div>
