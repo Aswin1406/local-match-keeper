@@ -5,7 +5,7 @@ import { shareScorecard } from "@/lib/shareCard";
 import { matchInsight } from "@/lib/winProbability";
 import { matchPlayerStats } from "@/lib/playerStats";
 import { PlayerStatsTable } from "@/components/PlayerStatsTable";
-import { ACTIONS, HALF_SECONDS, SPORT_META, cards, currentHalf, deleteMatch, firstHalfEnded, formatClock, halfRemainingSeconds, hasHalves, initials, matchElapsedSeconds, matchOvers, newId, overs, resultText, score, scoreLine, upsertMatch, wickets, } from "@/lib/matches";
+import { ACTIONS, HALF_SECONDS, SPORT_META, battingFirst, cards, currentHalf, deleteMatch, firstHalfEnded, formatClock, halfRemainingSeconds, hasHalves, initials, matchElapsedSeconds, matchOvers, newId, overs, resultText, score, scoreLine, tossText, upsertMatch, wickets, } from "@/lib/matches";
 export const Route = createFileRoute("/match/$id")({
     head: () => ({
         meta: [
@@ -38,6 +38,11 @@ function MatchPage() {
     const [player, setPlayer] = useState("");
     const [bowler, setBowler] = useState("");
     const [, setTick] = useState(0);
+    // Cricket: start scoring with the team batting first (from the toss).
+    useEffect(() => {
+        if (match && match.sport === "cricket" && match.toss && match.events.length === 0)
+            setTeam(battingFirst(match));
+    }, [match?.id, match?.toss]);
     // Half clock for kabaddi/football: ticks every second while live and
     // auto-ends the half (pause after half 1, complete after half 2).
     useEffect(() => {
@@ -193,9 +198,14 @@ function MatchPage() {
             <div className="font-display text-[22px] text-mist px-2">v</div>
             <Side name={match.teamB.name} logo={match.teamB.logo} tone="teal" line={scoreLine(match, "b")}/>
           </div>
-          {match.sport === "cricket" ? (<div className="mt-3 text-center text-[11px] text-mist">
-              {overs(match, "a")} overs · {overs(match, "b")} overs · of {matchOvers(match)}
-            </div>) : null}
+          {match.sport === "cricket" ? (<>
+              <div className="mt-3 text-center text-[11px] text-mist">
+                {overs(match, "a")} overs · {overs(match, "b")} overs · of {matchOvers(match)}
+              </div>
+              {match.toss ? (<div className="mt-1 text-center text-[11px] text-gold/80">
+                  🪙 {tossText(match)}
+                </div>) : null}
+            </>) : null}
           {match.sport === "football" ? (<div className="mt-3 flex items-center justify-between">
               <TeamCards match={match} team="a"/>
               <span className="text-[10px] uppercase tracking-[0.16em] font-semibold text-mist">
@@ -238,6 +248,7 @@ function MatchPage() {
                     ? "bg-gold/15 border border-gold/50 text-gold"
                     : "bg-panel border border-white/8 text-mist"}`}>
                     {t === "a" ? match.teamA.name : match.teamB.name}
+                    {match.sport === "cricket" && battingFirst(match) === t ? (<span className="ml-1 text-[10px] font-bold text-gold/80">· bat</span>) : null}
                   </button>))}
               </div>
             </div>
@@ -419,6 +430,7 @@ function Scorecard({ match }) {
           {hasHalves(match.sport) ? "Match Completed · Final Score" : "Result"}
         </p>
         <p className="font-display text-[24px] mt-1">{resultText(match)}</p>
+        {match.toss ? (<p className="mt-1 text-[11px] text-mist">🪙 {tossText(match)}</p>) : null}
         <button onClick={onShare} disabled={sharing} className="mt-4 w-full rounded-2xl bg-gold text-night font-bold text-[15px] py-3.5 disabled:opacity-50">
           {sharing
             ? "Preparing card…"

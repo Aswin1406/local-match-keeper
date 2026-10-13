@@ -33,6 +33,8 @@ function NewMatch() {
     const [logoA, setLogoA] = useState("");
     const [logoB, setLogoB] = useState("");
     const [overs, setOvers] = useState("20");
+    const [tossWinner, setTossWinner] = useState("a");
+    const [tossChoice, setTossChoice] = useState("bat");
     const [errors, setErrors] = useState({});
     function create(start) {
         const next = {};
@@ -54,6 +56,7 @@ function NewMatch() {
             date,
             venue: venue.trim(),
             overs: sport === "cricket" ? Math.max(1, Math.floor(Number(overs) || 20)) : undefined,
+            toss: sport === "cricket" ? { winner: tossWinner, choice: tossChoice } : undefined,
             status: start ? "live" : "upcoming",
             events: [],
             createdAt: Date.now(),
@@ -136,6 +139,24 @@ function NewMatch() {
               <p className={labelCls}>Overs per innings</p>
               <input type="number" min={1} max={50} inputMode="numeric" className={inputCls} placeholder="20" value={overs} onChange={(e) => setOvers(e.target.value)}/>
               <p className="text-[11px] text-mist">Used for the smart target and win probability. Defaults to 20.</p>
+            </div>) : null}
+
+          {sport === "cricket" ? (<div className="space-y-2">
+              <p className={labelCls}>Toss</p>
+              <div className="grid grid-cols-2 gap-2">
+                {["a", "b"].map((t) => (<button key={t} type="button" onClick={() => setTossWinner(t)} className={`rounded-2xl py-3 text-[13px] font-bold truncate px-2 ${tossWinner === t
+                ? "bg-gold/15 border border-gold/50 text-gold"
+                : "bg-panel border border-white/8 text-mist"}`}>
+                    {t === "a" ? "Team A won" : "Team B won"}
+                  </button>))}
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                {["bat", "bowl"].map((c) => (<button key={c} type="button" onClick={() => setTossChoice(c)} className={`rounded-2xl py-3 text-[13px] font-bold ${tossChoice === c
+                ? "bg-gold/15 border border-gold/50 text-gold"
+                : "bg-panel border border-white/8 text-mist"}`}>
+                    {c === "bat" ? "Elected to bat" : "Elected to bowl"}
+                  </button>))}
+              </div>
             </div>) : null}
 
           <div className="flex flex-col gap-2.5 sm:flex-row">
