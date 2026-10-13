@@ -5,7 +5,7 @@ import { shareScorecard } from "@/lib/shareCard";
 import { matchInsight } from "@/lib/winProbability";
 import { matchPlayerStats } from "@/lib/playerStats";
 import { PlayerStatsTable } from "@/components/PlayerStatsTable";
-import { ACTIONS, HALF_SECONDS, SPORT_META, cards, currentHalf, deleteMatch, firstHalfEnded, formatClock, halfRemainingSeconds, hasHalves, initials, matchElapsedSeconds, matchOvers, newId, overs, resultText, score, scoreLine, upsertMatch, wickets, } from "@/lib/matches";
+import { ACTIONS, HALF_SECONDS, SPORT_META, battingFirst, cards, currentHalf, deleteMatch, firstHalfEnded, formatClock, halfRemainingSeconds, hasHalves, initials, matchElapsedSeconds, matchOvers, newId, overs, resultText, score, scoreLine, tossText, upsertMatch, wickets, } from "@/lib/matches";
 export const Route = createFileRoute("/match/$id")({
     head: () => ({
         meta: [
