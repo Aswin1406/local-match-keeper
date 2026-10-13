@@ -141,3 +141,18 @@ export function resultText(match) {
     const winner = a > b ? match.teamA.name : match.teamB.name;
     return `${winner} won by ${Math.abs(a - b)} ${SPORT_META[match.sport].unit}`;
 }
+/** Which team bats first ("a" or "b"), derived from the toss (cricket). */
+export function battingFirst(match) {
+    if (!match.toss)
+        return "a";
+    if (match.toss.choice === "bat")
+        return match.toss.winner;
+    return match.toss.winner === "a" ? "b" : "a";
+}
+/** Human line like "Team X won the toss and chose to bat" (empty when no toss). */
+export function tossText(match) {
+    if (!match.toss)
+        return "";
+    const winner = match.toss.winner === "a" ? match.teamA.name : match.teamB.name;
+    return `${winner} won the toss and chose to ${match.toss.choice}`;
+}
