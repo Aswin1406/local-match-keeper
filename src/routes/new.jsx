@@ -141,6 +141,24 @@ function NewMatch() {
               <p className="text-[11px] text-mist">Used for the smart target and win probability. Defaults to 20.</p>
             </div>) : null}
 
+          {sport === "cricket" ? (<div className="space-y-2">
+              <p className={labelCls}>Toss</p>
+              <div className="grid grid-cols-2 gap-2">
+                {["a", "b"].map((t) => (<button key={t} type="button" onClick={() => setTossWinner(t)} className={`rounded-2xl py-3 text-[13px] font-bold truncate px-2 ${tossWinner === t
+                ? "bg-gold/15 border border-gold/50 text-gold"
+                : "bg-panel border border-white/8 text-mist"}`}>
+                    {t === "a" ? "Team A won" : "Team B won"}
+                  </button>))}
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                {["bat", "bowl"].map((c) => (<button key={c} type="button" onClick={() => setTossChoice(c)} className={`rounded-2xl py-3 text-[13px] font-bold ${tossChoice === c
+                ? "bg-gold/15 border border-gold/50 text-gold"
+                : "bg-panel border border-white/8 text-mist"}`}>
+                    {c === "bat" ? "Elected to bat" : "Elected to bowl"}
+                  </button>))}
+              </div>
+            </div>) : null}
+
           <div className="flex flex-col gap-2.5 sm:flex-row">
             <button onClick={() => create(true)} className="flex-1 rounded-2xl bg-gradient-to-r from-gold to-lime text-night font-bold text-[15px] py-4">
               Start scoring now
