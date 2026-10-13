@@ -132,6 +132,12 @@ function NewMatch() {
             </div>
           </div>
 
+          {sport === "cricket" ? (<div className="space-y-2">
+              <p className={labelCls}>Overs per innings</p>
+              <input type="number" min={1} max={50} inputMode="numeric" className={inputCls} placeholder="20" value={overs} onChange={(e) => setOvers(e.target.value)}/>
+              <p className="text-[11px] text-mist">Used for the smart target and win probability. Defaults to 20.</p>
+            </div>) : null}
+
           <div className="flex flex-col gap-2.5 sm:flex-row">
             <button onClick={() => create(true)} className="flex-1 rounded-2xl bg-gradient-to-r from-gold to-lime text-night font-bold text-[15px] py-4">
               Start scoring now
