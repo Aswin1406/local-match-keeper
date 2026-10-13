@@ -33,6 +33,8 @@ function NewMatch() {
     const [logoA, setLogoA] = useState("");
     const [logoB, setLogoB] = useState("");
     const [overs, setOvers] = useState("20");
+    const [tossWinner, setTossWinner] = useState("a");
+    const [tossChoice, setTossChoice] = useState("bat");
     const [errors, setErrors] = useState({});
     function create(start) {
         const next = {};
