@@ -194,7 +194,7 @@ function MatchPage() {
             <Side name={match.teamB.name} logo={match.teamB.logo} tone="teal" line={scoreLine(match, "b")}/>
           </div>
           {match.sport === "cricket" ? (<div className="mt-3 text-center text-[11px] text-mist">
-              {overs(match, "a")} overs · {overs(match, "b")} overs
+              {overs(match, "a")} overs · {overs(match, "b")} overs · of {matchOvers(match)}
             </div>) : null}
           {match.sport === "football" ? (<div className="mt-3 flex items-center justify-between">
               <TeamCards match={match} team="a"/>
