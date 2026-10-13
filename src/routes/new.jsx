@@ -56,6 +56,7 @@ function NewMatch() {
             date,
             venue: venue.trim(),
             overs: sport === "cricket" ? Math.max(1, Math.floor(Number(overs) || 20)) : undefined,
+            toss: sport === "cricket" ? { winner: tossWinner, choice: tossChoice } : undefined,
             status: start ? "live" : "upcoming",
             events: [],
             createdAt: Date.now(),
