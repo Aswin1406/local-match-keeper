@@ -13,7 +13,7 @@ function exportMatches() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `localscore-backup-${new Date().toISOString().slice(0, 10)}.json`;
+    a.download = `game-pulse-backup-${new Date().toISOString().slice(0, 10)}.json`;
     a.click();
     URL.revokeObjectURL(url);
 }
@@ -39,12 +39,12 @@ function importMatches(list) {
 export const Route = createFileRoute("/history")({
     head: () => ({
         meta: [
-            { title: "Match history — LocalScore" },
+            { title: "Match history — Game Pulse" },
             {
                 name: "description",
                 content: "Every local match you have scored, with final results and scorecards.",
             },
-            { property: "og:title", content: "Match history — LocalScore" },
+            { property: "og:title", content: "Match history — Game Pulse" },
             {
                 property: "og:description",
                 content: "Every local match you have scored, with final results.",
@@ -68,14 +68,14 @@ function History() {
             const parsed = JSON.parse(await file.text());
             const result = importMatches(parsed);
             if (!result)
-                setNotice("That file doesn't look like a LocalScore backup.");
+                setNotice("That file doesn't look like a Game Pulse backup.");
             else
                 setNotice(result.added > 0
                     ? `Restored ${result.added} match${result.added === 1 ? "" : "es"}${result.skipped ? ` (${result.skipped} already here)` : ""}.`
                     : "All matches in that file are already on this device.");
         }
         catch {
-            setNotice("Couldn't read that file — please choose a LocalScore backup (.json).");
+            setNotice("Couldn't read that file — please choose a Game Pulse backup (.json).");
         }
     };
     return (<div className="min-h-screen w-full bg-night text-ink">

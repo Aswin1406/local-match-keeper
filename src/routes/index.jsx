@@ -7,12 +7,12 @@ import { STICKERS } from "@/lib/stickers";
 export const Route = createFileRoute("/")({
     head: () => ({
         meta: [
-            { title: "LocalScore — Live local match dashboard" },
+            { title: "Game Pulse — Live local match dashboard" },
             {
                 name: "description",
                 content: "Live, upcoming and completed local Cricket, Kabaddi and Football matches, scored by hand on your device.",
             },
-            { property: "og:title", content: "LocalScore — Live local match dashboard" },
+            { property: "og:title", content: "Game Pulse — Live local match dashboard" },
             {
                 property: "og:description",
                 content: "Score local Cricket, Kabaddi and Football matches by hand.",
@@ -38,10 +38,10 @@ function Dashboard() {
         <header className="flex items-center px-5 pt-6 pb-3">
           <div className="flex min-w-0 items-center gap-2.5">
             <div className="size-9 shrink-0 rounded-xl bg-gradient-to-br from-gold to-crim grid place-items-center">
-              <span className="font-display text-night text-lg">LS</span>
+              <span className="font-display text-night text-lg">GP</span>
             </div>
             <div className="leading-none">
-              <div className="font-bold text-[15px] tracking-tight">LocalScore</div>
+              <div className="font-bold text-[15px] tracking-tight">Game Pulse</div>
               <div className="text-[10px] uppercase tracking-[0.22em] text-mist mt-1">
                 Match tracker
               </div>

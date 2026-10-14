@@ -5,12 +5,12 @@ import { STICKERS } from "@/lib/stickers";
 export const Route = createFileRoute("/new")({
     head: () => ({
         meta: [
-            { title: "Create a match — LocalScore" },
+            { title: "Create a match — Game Pulse" },
             {
                 name: "description",
                 content: "Set up a new local Cricket, Kabaddi or Football match with teams, players, date and venue.",
             },
-            { property: "og:title", content: "Create a match — LocalScore" },
+            { property: "og:title", content: "Create a match — Game Pulse" },
             {
                 property: "og:description",
                 content: "Set up teams, players, date and venue for your next local match.",

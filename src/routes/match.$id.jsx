@@ -9,12 +9,12 @@ import { ACTIONS, HALF_SECONDS, SPORT_META, battingFirst, cards, currentHalf, de
 export const Route = createFileRoute("/match/$id")({
     head: () => ({
         meta: [
-            { title: "Scorekeeper — LocalScore" },
+            { title: "Scorekeeper — Game Pulse" },
             {
                 name: "description",
                 content: "Keep score live with big touch buttons, pause, resume and undo.",
             },
-            { property: "og:title", content: "Scorekeeper — LocalScore" },
+            { property: "og:title", content: "Scorekeeper — Game Pulse" },
             {
                 property: "og:description",
                 content: "Keep score live with big touch buttons, pause, resume and undo.",
