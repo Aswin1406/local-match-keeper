@@ -61,7 +61,7 @@ export async function renderScorecardPng(match) {
     ctx.textAlign = "center";
     ctx.fillStyle = "#d4af37";
     ctx.font = "700 40px system-ui, sans-serif";
-    ctx.fillText("LOCALSCORE", W / 2, 120);
+    ctx.fillText("GAME PULSE", W / 2, 120);
     ctx.fillStyle = "rgba(232,236,244,0.65)";
     ctx.font = "600 30px system-ui, sans-serif";
     const statusLine = match.status === "completed"
@@ -155,18 +155,18 @@ export async function renderScorecardPng(match) {
         ctx.fillText(footer, W / 2, 950);
     ctx.fillStyle = "rgba(212,175,55,0.7)";
     ctx.font = "600 26px system-ui, sans-serif";
-    ctx.fillText("Scored with LocalScore", W / 2, 1000);
+    ctx.fillText("Scored with Game Pulse", W / 2, 1000);
     return new Promise((resolve, reject) => canvas.toBlob((b) => (b ? resolve(b) : reject(new Error("Could not render image"))), "image/png"));
 }
 /** Shares the card via the native share sheet when possible, else downloads it. */
 export async function shareScorecard(match) {
     const blob = await renderScorecardPng(match);
-    const file = new File([blob], `localscore-${match.id}.png`, { type: "image/png" });
+    const file = new File([blob], `game-pulse-${match.id}.png`, { type: "image/png" });
     if (navigator.canShare?.({ files: [file] })) {
         try {
             await navigator.share({
                 files: [file],
-                title: "LocalScore scorecard",
+                title: "Game Pulse scorecard",
                 text: `${match.teamA.name} vs ${match.teamB.name} — ${resultText(match)}`,
             });
             return "shared";

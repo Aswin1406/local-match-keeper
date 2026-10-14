@@ -67,12 +67,12 @@ export const Route = createRootRouteWithContext()({
         meta: [
             { charSet: "utf-8" },
             { name: "viewport", content: "width=device-width, initial-scale=1" },
-            { title: "LocalScore — Local match tracker" },
+            { title: "Game Pulse — Local match tracker" },
             {
                 name: "description",
                 content: "Track local Cricket, Kabaddi and Football matches by hand.",
             },
-            { name: "author", content: "LocalScore" },
+            { name: "author", content: "Game Pulse" },
             { property: "og:type", content: "website" },
             { name: "twitter:card", content: "summary_large_image" },
         ],

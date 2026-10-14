@@ -1,4 +1,4 @@
-# LocalScore Match Tracker
+# Game Pulse Match Tracker
 
 A mobile-first React + JavaScript web app for manually tracking local Cricket, Kabaddi and Football matches. No external sports APIs.
 
@@ -42,7 +42,7 @@ Download the **LTS** version (22.x) from [nodejs.org](https://nodejs.org) and in
 ### 2. Open the project in VS Code
 
 1. Unzip this project anywhere (for example `Documents`).
-2. Open VS Code → **File → Open Folder…** → select the `LocalScore` folder.
+2. Open VS Code → **File → Open Folder…** → select the `GamePulse` folder.
 
 ### 3. Install and run
 

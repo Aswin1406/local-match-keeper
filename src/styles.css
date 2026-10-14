@@ -159,7 +159,7 @@
   }
 }
 
-/* LocalScore — daylight and stadium-night themes */
+/* Game Pulse — daylight and stadium-night themes */
 :root {
   --night: oklch(0.975 0.008 92);
   --panel: oklch(1 0 0);
