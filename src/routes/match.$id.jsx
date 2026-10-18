@@ -5,6 +5,8 @@ import { shareScorecard } from "@/lib/shareCard";
 import { matchInsight } from "@/lib/winProbability";
 import { matchPlayerStats } from "@/lib/playerStats";
 import { PlayerStatsTable } from "@/components/PlayerStatsTable";
+import { Button } from "@/components/ui/button";
+import { cricketState, recordCricketEvent, startCricketChase, undoCricketEvent } from "@/lib/cricket";
 import { ACTIONS, HALF_SECONDS, SPORT_META, battingFirst, cards, currentHalf, deleteMatch, firstHalfEnded, formatClock, halfRemainingSeconds, hasHalves, initials, matchElapsedSeconds, matchOvers, newId, overs, resultText, score, scoreLine, tossText, upsertMatch, wickets, } from "@/lib/matches";
 export const Route = createFileRoute("/match/$id")({
     head: () => ({
@@ -15,6 +17,8 @@ export const Route = createFileRoute("/match/$id")({
                 content: "Keep score live with big touch buttons, pause, resume and undo.",
             },
             { property: "og:title", content: "Scorekeeper — Game Pulse" },
+            { property: "og:type", content: "website" },
+            { name: "twitter:card", content: "summary_large_image" },
             {
                 property: "og:description",
                 content: "Keep score live with big touch buttons, pause, resume and undo.",
@@ -38,11 +42,14 @@ function MatchPage() {
     const [player, setPlayer] = useState("");
     const [bowler, setBowler] = useState("");
     const [, setTick] = useState(0);
-    // Cricket: start scoring with the team batting first (from the toss).
+    // Keep scoring on the active cricket innings, including restored matches.
     useEffect(() => {
-        if (match && match.sport === "cricket" && match.toss && match.events.length === 0)
-            setTeam(battingFirst(match));
-    }, [match?.id, match?.toss]);
+        if (!match || match.sport !== "cricket") return;
+        const state = cricketState(match);
+        setTeam(state.active);
+        if (match.status !== "completed" && (state.complete || (state.break && match.status !== "paused")))
+            upsertMatch({ ...match, status: state.complete ? "completed" : "paused" });
+    }, [match]);
     // Half clock for kabaddi/football: ticks every second while live and
     // auto-ends the half (pause after half 1, complete after half 2).
     useEffect(() => {
@@ -87,12 +94,20 @@ function MatchPage() {
     }
     const meta = SPORT_META[match.sport];
     const done = match.status === "completed";
+    const cricket = match.sport === "cricket" ? cricketState(match) : null;
     const activeTeam = team === "a" ? match.teamA : match.teamB;
     const otherTeam = team === "a" ? match.teamB : match.teamA;
     function update(patch) {
         upsertMatch({ ...match, ...patch });
     }
     function addEvent(label, points, wicket, ball, card) {
+        if (cricket) {
+            upsertMatch(recordCricketEvent(match, {
+                id: newId(), team: cricket.active, label, points, wicket, ball,
+                player: player || undefined, bowler: bowler || undefined, ts: Date.now(),
+            }));
+            return;
+        }
         const starting = match.status === "upcoming";
         update({
             status: starting ? "live" : match.status,
@@ -115,6 +130,7 @@ function MatchPage() {
         });
     }
     function togglePause() {
+        if (cricket?.break || cricket?.complete) return;
         if (match.status === "live") {
             // Freeze the half clock where it is.
             const elapsed = hasHalves(match.sport)
@@ -160,7 +176,18 @@ function MatchPage() {
         });
     }
     function undo() {
+        if (cricket) {
+            upsertMatch(undoCricketEvent(match));
+            setPlayer("");
+            setBowler("");
+            return;
+        }
         update({ events: match.events.slice(0, -1) });
+    }
+    function startSecondInnings() {
+        upsertMatch(startCricketChase(match, { id: newId(), ts: Date.now() }));
+        setPlayer("");
+        setBowler("");
     }
     return (<div className="min-h-screen w-full bg-night text-ink">
       <div className="mx-auto w-full max-w-[880px] px-5 pt-6 pb-12">
@@ -179,6 +206,8 @@ function MatchPage() {
             <span className="text-[10px] uppercase tracking-[0.18em] text-mist font-semibold">
               {done
             ? "Full time"
+            : cricket?.break
+                ? "1st Innings Completed"
             : firstHalfEnded(match)
                 ? "1st Half Completed"
                 : match.status === "paused"
@@ -218,6 +247,15 @@ function MatchPage() {
         <SmartTarget match={match}/>
 
         {done ? (<Scorecard match={match}/>) : (<>
+            {cricket?.break ? (<div className="mt-5 border-y border-gold/30 py-5 text-center">
+                <p className="text-[13px] font-semibold text-gold">1st Innings Completed</p>
+                <p className="mt-2 text-[14px] text-mist">
+                  {cricket.second === "a" ? match.teamA.name : match.teamB.name} need {score(match, cricket.first) + 1} runs to win
+                </p>
+                <Button onClick={startSecondInnings} className="mt-4 h-auto w-full bg-gold py-4 text-night hover:bg-gold/90">
+                  ▶ Start 2nd Innings
+                </Button>
+              </div>) : null}
             {/* Half-time break card */}
             {firstHalfEnded(match) ? (<div className="mt-5 rounded-3xl bg-gold/10 border border-gold/30 p-5 text-center">
                 <p className="text-[10px] uppercase tracking-[0.18em] text-gold font-semibold">
@@ -238,7 +276,7 @@ function MatchPage() {
                 Scoring for
               </p>
               <div className="mt-2 grid grid-cols-2 gap-2">
-                {["a", "b"].map((t) => (<button key={t} onClick={() => {
+                {["a", "b"].map((t) => (<button key={t} disabled={!!cricket && (cricket.break || t !== cricket.active)} onClick={() => {
                     if (t !== team) {
                         setTeam(t);
                         setPlayer("");
@@ -261,7 +299,7 @@ function MatchPage() {
                         ? "bg-yellow-card text-yellow-card-foreground border border-yellow-card-foreground/20 shadow-[0_8px_24px_-10px_var(--yellow-card)]"
                         : "bg-red-card text-red-card-foreground border border-red-card-foreground/20 shadow-[0_8px_24px_-10px_var(--red-card)]"
                     : toneCls[a.tone];
-                return (<button key={a.label} disabled={match.status === "paused"} onClick={() => addEvent(a.label, a.points, a.wicket, a.ball, a.card)} className={`inline-flex items-center justify-center gap-2 rounded-2xl py-6 font-bold text-[16px] disabled:opacity-40 ${cls}`}>
+                return (<button key={a.label} disabled={match.status === "paused" || !!cricket?.break || !!cricket?.complete} onClick={() => addEvent(a.label, a.points, a.wicket, a.ball, a.card)} className={`inline-flex items-center justify-center gap-2 rounded-2xl py-6 font-bold text-[16px] disabled:opacity-40 ${cls}`}>
                     {a.card ? (<span className="h-5 w-3.5 rounded-[2px] bg-current opacity-90" aria-hidden/>) : null}
                     {a.label}
                   </button>);
@@ -272,7 +310,7 @@ function MatchPage() {
               {hasHalves(match.sport) ? (<button onClick={() => switchHalf(currentHalf(match) === 1 ? 2 : 1)} className="flex-1 rounded-xl bg-panel2 border border-teal/30 text-teal font-semibold text-[13px] py-3">
                   {currentHalf(match) === 1 ? "▶ Half 2" : "◀ Half 1"}
                 </button>) : null}
-              <button onClick={togglePause} className="flex-1 rounded-xl bg-panel2 border border-white/10 text-mist font-semibold text-[13px] py-3">
+              <button onClick={togglePause} disabled={!!cricket?.break} className="flex-1 rounded-xl bg-panel2 border border-white/10 text-mist font-semibold text-[13px] py-3 disabled:opacity-40">
                 {match.status === "paused" ? "↺ Resume" : "⏸ Pause"}
               </button>
               <button onClick={undo} disabled={match.events.length === 0} className="flex-1 rounded-xl bg-panel2 border border-white/10 text-mist font-semibold text-[13px] py-3 disabled:opacity-40">
@@ -297,7 +335,7 @@ function MatchPage() {
           </>)}
 
         <div className="mt-6 flex gap-2.5">
-          {done ? (<button onClick={() => update({ status: "live" })} className="flex-1 rounded-xl bg-panel2 border border-white/10 text-mist font-semibold text-[13px] py-3">
+          {done && cricket?.complete ? (<Button variant="secondary" onClick={undo} className="h-auto flex-1 py-3 text-mist">↩ Undo last action</Button>) : done ? (<button onClick={() => update({ status: "live" })} className="flex-1 rounded-xl bg-panel2 border border-white/10 text-mist font-semibold text-[13px] py-3">
               Reopen match
             </button>) : null}
           <button onClick={() => {
@@ -427,7 +465,7 @@ function Scorecard({ match }) {
     return (<div className="mt-5 space-y-3">
       <div className="rounded-2xl bg-gold/10 border border-gold/25 p-4 text-center">
         <p className="text-[10px] uppercase tracking-[0.18em] text-gold font-semibold">
-          {hasHalves(match.sport) ? "Match Completed · Final Score" : "Result"}
+          Match Completed · Final Score
         </p>
         <p className="font-display text-[24px] mt-1">{resultText(match)}</p>
         {match.toss ? (<p className="mt-1 text-[11px] text-mist">🪙 {tossText(match)}</p>) : null}

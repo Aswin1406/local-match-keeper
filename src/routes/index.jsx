@@ -13,6 +13,8 @@ export const Route = createFileRoute("/")({
                 content: "Live, upcoming and completed local Cricket, Kabaddi and Football matches, scored by hand on your device.",
             },
             { property: "og:title", content: "Game Pulse — Live local match dashboard" },
+            { property: "og:type", content: "website" },
+            { name: "twitter:card", content: "summary_large_image" },
             {
                 property: "og:description",
                 content: "Score local Cricket, Kabaddi and Football matches by hand.",

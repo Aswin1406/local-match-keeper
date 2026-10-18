@@ -11,6 +11,8 @@ export const Route = createFileRoute("/new")({
                 content: "Set up a new local Cricket, Kabaddi or Football match with teams, players, date and venue.",
             },
             { property: "og:title", content: "Create a match — Game Pulse" },
+            { property: "og:type", content: "website" },
+            { name: "twitter:card", content: "summary_large_image" },
             {
                 property: "og:description",
                 content: "Set up teams, players, date and venue for your next local match.",
