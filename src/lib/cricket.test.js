@@ -11,7 +11,8 @@ test("selected one-over innings stops at six legal balls and cannot resume scori
     const m = firstInnings(match());
     assert.equal(m.status, "paused");
     assert.equal(balls(m, "a"), 6);
-    assert.equal(recordCricketEvent({ ...m, status: "live" }, delivery("a")), recordCricketEvent({ ...m, status: "live" }, delivery("a"))); // replaced below by concrete event check
+    const resumed = { ...m, status: "live" };
+    assert.equal(recordCricketEvent(resumed, delivery("a")), resumed);
 });
 test("both innings finish at the selected overs and persist completed state", () => {
     let m = startCricketChase(firstInnings(match()), { id: "start" });

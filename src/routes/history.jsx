@@ -45,6 +45,8 @@ export const Route = createFileRoute("/history")({
                 content: "Every local match you have scored, with final results and scorecards.",
             },
             { property: "og:title", content: "Match history — Game Pulse" },
+            { property: "og:type", content: "website" },
+            { name: "twitter:card", content: "summary_large_image" },
             {
                 property: "og:description",
                 content: "Every local match you have scored, with final results.",
