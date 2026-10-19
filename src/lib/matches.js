@@ -55,6 +55,8 @@ export function upsertMatch(match) {
 }
 export function deleteMatch(id) {
     saveMatches(loadMatches().filter((m) => m.id !== id));
+    if (typeof window !== "undefined")
+        window.dispatchEvent(new CustomEvent("localscore:delete", { detail: id }));
 }
 export function newId() {
     return Math.random().toString(36).slice(2, 10);
